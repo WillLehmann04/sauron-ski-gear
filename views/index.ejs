@@ -1,0 +1,140 @@
+<nav class="nav" id="nav">
+  <div class="nav__inner">
+    <a class="nav__logo" href="/">Gear<span>Worth</span></a>
+    <div class="nav__links" aria-hidden="true">
+      <span>Estimate</span>
+      <span>Buy</span>
+      <span>Sell</span>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <canvas class="hero__snow" id="snow" aria-hidden="true"></canvas>
+
+  <div class="hero__slope" aria-hidden="true">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="0,80 1440,14 1440,80" fill="#fafcff"/>
+    </svg>
+  </div>
+
+  <div class="hero__content">
+    <h1 class="hero__title">
+      <span class="hero__line">What's</span>
+      <span class="hero__line">My Gear</span>
+      <span class="hero__line hero__accent">Worth?</span>
+    </h1>
+    <div class="hero__meta">
+      <span class="hero__meta-rule" aria-hidden="true"></span>
+      <p class="hero__meta-text">Ski &amp; snowboard gear &middot; resale estimates &middot; launching soon</p>
+    </div>
+  </div>
+
+  <div class="hero__visual" aria-label="Gear valuation estimate">
+    <div class="val-panel">
+
+      <div class="val-s val-s--gear">
+        <p class="val-s__eyebrow">Your gear</p>
+        <div class="val-s__names">
+          <span class="val-s__brand">Salomon</span>
+          <span class="val-s__model">QST&nbsp;92</span>
+        </div>
+        <div class="val-s__rule"><span class="val-s__rule-fill"></span></div>
+        <div class="val-s__specs">
+          <span>182cm</span>
+          <span>2021</span>
+          <span>Good condition</span>
+        </div>
+        <div class="val-s__status">
+          <span class="val-s__dot" aria-hidden="true"></span>
+          <span>Ready to estimate</span>
+        </div>
+      </div>
+
+      <div class="val-s val-s--scan">
+        <p class="val-s__eyebrow">Analyzing</p>
+        <p class="val-s__model val-s__model--dim">QST&nbsp;92</p>
+        <div class="val-s__rule"><span class="val-s__rule-fill"></span></div>
+        <div class="val-s__progress">
+          <div class="val-s__progress-fill"></div>
+        </div>
+        <p class="val-s__scan-label">Comparing 140 recent sales&hellip;</p>
+      </div>
+
+      <div class="val-s val-s--value">
+        <p class="val-s__eyebrow">Salomon QST 92 &middot; est. resale</p>
+        <p class="val-s__price">$420</p>
+        <div class="val-s__rule"><span class="val-s__rule-fill"></span></div>
+        <div class="val-s__range">
+          <span class="val-s__range-lo">$280</span>
+          <div class="val-s__range-track">
+            <span class="val-s__range-dot"></span>
+          </div>
+          <span class="val-s__range-hi">$560</span>
+        </div>
+        <p class="val-s__comps">140 comparable sales &middot; updated weekly</p>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <section class="preview" aria-label="Sample gear estimate">
+    <div class="preview__inner">
+      <div class="preview__card">
+        <div class="preview__left">
+          <p class="preview__tag">Sample estimate</p>
+          <h2 class="preview__gear-name">Salomon QST 92</h2>
+          <p class="preview__gear-meta">2021 &middot; 182cm &middot; Good condition</p>
+        </div>
+        <div class="preview__right">
+          <p class="preview__result-label">Estimated resale value</p>
+          <p class="preview__range">$280<span class="preview__sep"> &mdash; </span>$420</p>
+          <p class="preview__basis">Based on 140 transactions &middot; updated weekly</p>
+        </div>
+      </div>
+      <p class="preview__prompt">Get your estimate when we launch &mdash; join the list below.</p>
+    </div>
+  </section>
+
+  <section class="form-section" aria-label="Join the waitlist">
+    <div class="form-section__inner">
+      <div class="form-card">
+        <h2 class="form-card__title">Join the waitlist</h2>
+        <p class="form-card__desc">Be first when we launch. No spam, ever.</p>
+        <div id="waitlist-app"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pillars" aria-label="What we're building">
+    <div class="pillars__inner">
+      <div class="pillar">
+        <h3 class="pillar__head">Instant estimates</h3>
+        <p class="pillar__body">Enter your gear, get a realistic resale range in seconds.</p>
+      </div>
+      <div class="pillar">
+        <h3 class="pillar__head">Real market data</h3>
+        <p class="pillar__body">Prices grounded in actual sales &mdash; not guesswork.</p>
+      </div>
+      <div class="pillar">
+        <h3 class="pillar__head">Buy &amp; sell</h3>
+        <p class="pillar__body">A focused marketplace for skiers. No noise, no fees.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span class="footer__logo">GearWorth</span>
+  <span class="footer__copy">&copy; 2026</span>
+</footer>
+
+<script src="/js/components/WaitlistForm.js"></script>
+<script>
+  Vue.createApp(WaitlistForm).mount('#waitlist-app');
+</script>
+<script src="/js/main.js" defer></script>

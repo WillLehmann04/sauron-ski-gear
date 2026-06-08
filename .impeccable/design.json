@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-08T00:00:00Z",
+  "title": "Design System: GearWorth",
+  "extensions": {
+    "colorMeta": {
+      "deep-sky":       { "role": "primary",   "displayName": "Deep Sky",       "canonical": "#0d4f7c", "tonalRamp": ["#040f18", "#08243a", "#0d4f7c", "#1464a0", "#2280c4", "#5aaae0", "#96caf2", "#c8e5f8"] },
+      "alpine-blue":    { "role": "primary",   "displayName": "Alpine Blue",     "canonical": "#3a7aaa", "tonalRamp": ["#152e42", "#244e6e", "#3a7aaa", "#4d97cc", "#72b3e0", "#9ecfee", "#c4e5f8", "#e2f2fc"] },
+      "alpine-mid":     { "role": "secondary", "displayName": "Alpine Mid",      "canonical": "#72b8dc", "tonalRamp": ["#1a3f52", "#2d6682", "#4a96bb", "#72b8dc", "#96cde8", "#b8def2", "#d4eef8", "#ebf6fc"] },
+      "ice-sky":        { "role": "neutral",   "displayName": "Ice Sky",         "canonical": "#b8d6ec", "tonalRamp": ["#3a5870", "#5a7e96", "#8ab0c8", "#b8d6ec", "#cce3f3", "#ddeef8", "#ecf5fb", "#f5fafd"] },
+      "orange-cta":     { "role": "secondary", "displayName": "Beacon Orange",   "canonical": "#e87b1e", "tonalRamp": ["#5a2a06", "#8c440e", "#c0601a", "#e87b1e", "#f0973c", "#f5b470", "#fadaa8", "#fdf0dc"] },
+      "orange-deep":    { "role": "secondary", "displayName": "Orange Deep",     "canonical": "#d06c14", "tonalRamp": ["#4e2305", "#7c3a0a", "#a84f10", "#d06c14", "#e88630", "#f0a866", "#f8cca0", "#fce8d0"] },
+      "navy":           { "role": "neutral",   "displayName": "Navy",            "canonical": "#1c2d3a", "tonalRamp": ["#090f14", "#111c26", "#1c2d3a", "#2b4257", "#3a5a7a", "#587a99", "#8aa5bc", "#bfd0de"] },
+      "blue-secondary": { "role": "neutral",   "displayName": "Blue Secondary",  "canonical": "#5a7088", "tonalRamp": ["#1c2630", "#2e3f4e", "#435a6e", "#5a7088", "#7490a6", "#94b0c4", "#baced8", "#dde8ef"] },
+      "fresh-snow":     { "role": "neutral",   "displayName": "Fresh Snow",      "canonical": "#fafcff", "tonalRamp": ["#c0cad2", "#d2dde6", "#e0eaf2", "#eef4f9", "#f4f8fc", "#f7fafd", "#fafcff", "#ffffff"] },
+      "surface":        { "role": "neutral",   "displayName": "Surface",         "canonical": "#ffffff", "tonalRamp": ["#d0dce6", "#e0e8f0", "#eaf0f6", "#f0f6fa", "#f5f9fc", "#f8fbfd", "#fcfeff", "#ffffff"] },
+      "border":         { "role": "neutral",   "displayName": "Border",          "canonical": "#cddae6", "tonalRamp": ["#6a889e", "#8aa4b8", "#aabece", "#cddae6", "#d8e5ef", "#e4eef5", "#eff5f9", "#f7fafc"] },
+      "error":          { "role": "neutral",   "displayName": "Error Red",       "canonical": "#dc2626", "tonalRamp": ["#5a0a0a", "#8c1212", "#b81a1a", "#dc2626", "#e85858", "#f08080", "#f8b0b0", "#fde8e8"] },
+      "success":        { "role": "neutral",   "displayName": "Success Green",   "canonical": "#16a34a", "tonalRamp": ["#052214", "#0a3d24", "#0e6036", "#16a34a", "#26c462", "#4ed882", "#8eeaac", "#c6f5d6"] }
+    },
+    "typographyMeta": {
+      "display":  { "displayName": "Display",  "purpose": "Hero title only. Uppercase. White on deep blue." },
+      "headline": { "displayName": "Headline", "purpose": "Section headings and form card titles. Uppercase." },
+      "body":     { "displayName": "Body",     "purpose": "Subtitles, descriptions, help text. Max 65ch." },
+      "label":    { "displayName": "Label",    "purpose": "Eyebrows, form labels, nav links. Use sparingly." },
+      "small":    { "displayName": "Small",    "purpose": "Error messages, captions, secondary form notes." }
+    },
+    "shadows": [
+      {
+        "name": "card-lift",
+        "value": "0 2px 4px rgba(28, 60, 90, 0.06), 0 8px 28px rgba(28, 60, 90, 0.10)",
+        "purpose": "Form card only. Hue-shifted to navy-blue. No black shadows."
+      },
+      {
+        "name": "nav-solid",
+        "value": "0 1px 8px rgba(28, 60, 90, 0.08)",
+        "purpose": "Sticky nav when scrolled past 40px threshold."
+      }
+    ],
+    "motion": [
+      {
+        "name": "state-transition",
+        "value": "0.15s ease",
+        "purpose": "Input border, button background, form error states."
+      },
+      {
+        "name": "nav-transition",
+        "value": "0.3s ease",
+        "purpose": "Nav background, border, shadow, text-color on scroll."
+      },
+      {
+        "name": "success-entrance",
+        "value": "fadeUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) both",
+        "purpose": "Form success state fade+translate entrance."
+      }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "640px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The only primary action trigger. Beacon Orange. One per screen.",
+      "html": "<button class=\"ds-btn-primary\">Join the Waitlist</button>",
+      "css": ".ds-btn-primary { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; background: #e87b1e; color: #fff; border: none; border-radius: 7px; font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: background 0.15s, transform 0.1s; width: 100%; } .ds-btn-primary:hover { background: #d06c14; } .ds-btn-primary:active { transform: scale(0.98); } .ds-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "Form input. Understated. 1.5px border, focus ring in Alpine Blue.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-label\">Email <span class=\"ds-required\">*</span></label><input class=\"ds-input\" type=\"email\" placeholder=\"you@example.com\"></div>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 5px; } .ds-label { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; color: #1c2d3a; } .ds-required { color: #dc2626; margin-left: 2px; } .ds-input { padding: 10px 13px; border: 1.5px solid #cddae6; border-radius: 7px; font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 300; color: #1c2d3a; background: #fafcff; outline: none; transition: border-color 0.15s, box-shadow 0.15s; } .ds-input::placeholder { color: #98b0c4; } .ds-input:focus { border-color: #3a7aaa; box-shadow: 0 0 0 3px rgba(58, 122, 170, 0.13); }"
+    },
+    {
+      "name": "Form Card",
+      "kind": "card",
+      "refersTo": "form-card",
+      "description": "The only elevated surface. Hue-shifted structural shadow. No nested cards.",
+      "html": "<div class=\"ds-form-card\"><h2 class=\"ds-card-title\">Join the waitlist</h2><p class=\"ds-card-desc\">Be first when we launch. No spam, ever.</p></div>",
+      "css": ".ds-form-card { background: #ffffff; border-radius: 10px; box-shadow: 0 2px 4px rgba(28, 60, 90, 0.06), 0 8px 28px rgba(28, 60, 90, 0.10); padding: 28px 32px; } .ds-card-title { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; color: #1c2d3a; margin-bottom: 4px; } .ds-card-desc { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 300; color: #5a7088; margin-bottom: 20px; }"
+    },
+    {
+      "name": "Nav — Over Hero",
+      "kind": "nav",
+      "refersTo": "nav",
+      "description": "Glass-dark over the deep-blue hero. White text. Transitions to light on scroll.",
+      "html": "<nav class=\"ds-nav\"><div class=\"ds-nav-inner\"><a class=\"ds-nav-logo\" href=\"/\">Gear<span>Worth</span></a><div class=\"ds-nav-links\"><span>Estimate</span><span>Buy</span><span>Sell</span></div></div></nav>",
+      "css": ".ds-nav { position: sticky; top: 0; z-index: 100; background: rgba(13, 60, 100, 0.45); backdrop-filter: blur(20px) saturate(160%); border-bottom: 1px solid rgba(255,255,255,0.15); height: 56px; display: flex; align-items: center; padding: 0 max(20px, 5vw); } .ds-nav-inner { width: 100%; max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; } .ds-nav-logo { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.95); text-decoration: none; } .ds-nav-logo span { color: #e87b1e; } .ds-nav-links { display: flex; gap: 28px; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(210,235,252,0.85); }"
+    },
+    {
+      "name": "Hero Headline",
+      "kind": "custom",
+      "refersTo": "display",
+      "description": "The dominant display element. Barlow Condensed 800, clamp size, white on deep blue. Accent 'Worth?' in Beacon Orange.",
+      "html": "<div class=\"ds-hero-content\"><p class=\"ds-hero-eyebrow\">Instant resale estimates</p><h1 class=\"ds-hero-title\">What's<br>My Gear<br><span class=\"ds-hero-accent\">Worth?</span></h1><p class=\"ds-hero-subtitle\">Get a realistic resale range for your ski &amp; snowboard gear in seconds.</p></div>",
+      "css": ".ds-hero-content { position: relative; z-index: 2; max-width: 560px; } .ds-hero-eyebrow { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(180, 225, 248, 0.9); margin-bottom: 14px; } .ds-hero-title { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(52px, 9vw, 84px); font-weight: 800; line-height: 0.93; letter-spacing: -0.02em; text-transform: uppercase; color: #ffffff; margin-bottom: 22px; text-shadow: 0 2px 24px rgba(10, 40, 70, 0.25); } .ds-hero-accent { color: #e87b1e; } .ds-hero-subtitle { font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 300; color: rgba(220, 242, 255, 0.85); line-height: 1.65; max-width: 380px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Wax Room",
+    "overview": "The wax room is where serious skiers do their own tuning — a small, hot, purposeful space hung with used tools and marked by the smell of hot wax. Nothing in it is decorative. Every object is there because it's needed. The visual system takes the same stance: every element earns its place by doing a job.\n\nThe color logic follows the physical world. The hero gradient — from deep mountain-sky at #0d4f7c to fresh snow at #fafcff — is the literal view from a summit on a bluebird February morning. The orange CTA is a beacon: the color of a safety marker, a race gate, a ski patrol coat. It means action required. It appears once.\n\nTypography is authority without formality. Barlow Condensed 800 reads like a lift-ticket or a trail sign. DM Sans at weight 300 has the neutral utility of a conditions report: legible, undramatic, here to give information.",
+    "keyCharacteristics": [
+      "Deep blue-to-snow gradient hero; white text at altitude, dark text at base",
+      "Single beacon orange for primary action only — rarity is the function",
+      "Barlow Condensed 800 for all display and heading text; DM Sans 300/400 for body",
+      "Hue-shifted shadows in navy-blue (rgba(28, 60, 90, x)); black shadows forbidden",
+      "Structural elevation on form card and nav only; all other surfaces flat",
+      "Diagonal slope-cut SVG at hero-to-content transition — the system's distinctive layout element"
+    ],
+    "rules": [
+      { "name": "The Beacon Rule", "body": "Beacon Orange (#e87b1e) appears exactly once per screen — on the primary CTA button. Adding it to badges, notifications, hover treatments, or decorative accents dilutes the beacon. The rarity is the function.", "section": "colors" },
+      { "name": "The Hue-Shift Rule", "body": "All shadows use rgba(28, 60, 90, x) — the navy-blue shift of the brand. rgba(0, 0, 0, x) is forbidden. Black shadows flatten the palette and break the mountain color logic.", "section": "elevation" },
+      { "name": "The Two-Shadow Rule", "body": "Only the form card and the solid-state nav carry box-shadow. No other element gets elevation. Cards within the form, feature items, footer: flat.", "section": "elevation" },
+      { "name": "The Condensed-Only Headings Rule", "body": "All h1–h3 elements use Barlow Condensed 800. DM Sans headings are forbidden. The contrast between compressed display and light body creates the system's visual tension.", "section": "typography" },
+      { "name": "The One-Level Nesting Rule", "body": "Nested cards are always wrong. The form card is the only card on the page. Elements inside it are flat.", "section": "components" }
+    ],
+    "dos": [
+      "Do use Beacon Orange (#e87b1e) exactly once per screen — on the primary action button.",
+      "Do use hue-shifted shadows: rgba(28, 60, 90, x). Never rgba(0, 0, 0, x).",
+      "Do use Barlow Condensed 800 for all headings and form card titles, uppercase.",
+      "Do keep hero text white — the gradient is dark at the top; dark text is unreadable.",
+      "Do keep the slope-cut diagonal at the hero-to-content transition.",
+      "Do respect prefers-reduced-motion: snow canvas animation must be gated."
+    ],
+    "donts": [
+      "Don't add dense-classifieds layout (Facebook Marketplace / eBay energy).",
+      "Don't use outdoor-retail catalogue aesthetics (evo.com / REI feel).",
+      "Don't add Beacon Orange to anything that isn't a primary action trigger.",
+      "Don't use black shadows (rgba(0,0,0,x)) anywhere.",
+      "Don't use gradient text (background-clip: text + gradient).",
+      "Don't add a side-stripe border (border-left > 1px as a colored accent).",
+      "Don't put uppercase tracked eyebrows above every section.",
+      "Don't make the hero background light or near-white."
+    ]
+  }
+}
