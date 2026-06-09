@@ -13,6 +13,23 @@
 <header class="hero">
   <canvas class="hero__snow" id="snow" aria-hidden="true"></canvas>
 
+  <div class="hero__peaks" aria-hidden="true">
+    <svg viewBox="0 0 1440 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="pkGradBack" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(22,65,112,0.52)"/>
+          <stop offset="100%" stop-color="rgba(5,14,28,0.04)"/>
+        </linearGradient>
+        <linearGradient id="pkGradFront" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(8,28,52,0.78)"/>
+          <stop offset="100%" stop-color="rgba(3,10,20,0.08)"/>
+        </linearGradient>
+      </defs>
+      <path d="M0,130 L0,102 L220,60 L430,82 L640,38 L860,68 L1100,44 L1310,74 L1440,52 L1440,130 Z" fill="url(#pkGradBack)"/>
+      <path d="M0,130 L0,88 L145,32 L255,70 L400,12 L525,55 L648,6 L768,50 L905,18 L1035,52 L1180,8 L1295,48 L1395,20 L1440,40 L1440,130 Z" fill="url(#pkGradFront)"/>
+    </svg>
+  </div>
+
   <div class="hero__slope" aria-hidden="true">
     <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
       <polygon points="0,80 1440,14 1440,80" fill="#fafcff"/>
@@ -20,6 +37,10 @@
   </div>
 
   <div class="hero__content">
+    <p class="hero__eyebrow">
+      <span class="hero__eyebrow-dot" aria-hidden="true"></span>
+      Ski &amp; snowboard gear resale
+    </p>
     <h1 class="hero__title">
       <span class="hero__line">What's</span>
       <span class="hero__line">My Gear</span>
@@ -28,11 +49,11 @@
     <p class="hero__sub">Enter your ski or snowboard gear. Get a realistic resale range in seconds.</p>
     <div class="hero__meta">
       <span class="hero__meta-rule" aria-hidden="true"></span>
-      <p class="hero__meta-text">Free to use &middot; launching soon</p>
+      <p class="hero__meta-text">Free at launch &middot; no account required</p>
     </div>
   </div>
 
-  <div class="hero__visual" aria-label="Gear valuation estimate">
+  <div class="hero__visual" aria-hidden="true">
     <div class="val-panel">
 
       <div class="val-s val-s--gear">
@@ -100,7 +121,7 @@
 
   <section class="preview" aria-label="Sample gear estimate">
     <div class="preview__inner">
-      <div class="preview__card">
+      <div class="preview__card" data-reveal>
         <div class="preview__left">
           <p class="preview__tag">Sample estimate</p>
           <h2 class="preview__gear-name">Salomon QST 92</h2>
@@ -112,7 +133,7 @@
           <p class="preview__basis">Based on 140 transactions &middot; updated weekly</p>
         </div>
       </div>
-      <p class="preview__prompt">Get your estimate when we launch &mdash; join the list below.</p>
+      <p class="preview__prompt" data-reveal data-delay="120">That's what your estimate looks like. Join the list for day-one access.</p>
     </div>
   </section>
 
@@ -120,7 +141,7 @@
     <div class="form-section__inner">
       <div class="form-card">
         <h2 class="form-card__title">Join the waitlist</h2>
-        <p class="form-card__desc">Be first when we launch. No spam, ever.</p>
+        <p class="form-card__desc">One email when GearWorth opens. No newsletter, no promotions.</p>
         <div id="waitlist-app"></div>
       </div>
     </div>
@@ -128,17 +149,17 @@
 
   <section class="pillars" aria-label="What we're building">
     <div class="pillars__inner">
-      <div class="pillar">
+      <div class="pillar" data-reveal>
         <h3 class="pillar__head">Instant estimates</h3>
-        <p class="pillar__body">Enter your gear, get a realistic resale range in seconds.</p>
+        <p class="pillar__body">Enter brand, model, year, and condition. A dollar range lands in seconds.</p>
       </div>
-      <div class="pillar">
+      <div class="pillar" data-reveal data-delay="80">
         <h3 class="pillar__head">Real market data</h3>
-        <p class="pillar__body">Prices grounded in actual sales &mdash; not guesswork.</p>
+        <p class="pillar__body">Prices built from thousands of real transactions, refreshed weekly.</p>
       </div>
-      <div class="pillar">
+      <div class="pillar" data-reveal data-delay="160">
         <h3 class="pillar__head">Buy &amp; sell</h3>
-        <p class="pillar__body">A focused marketplace for skiers. No noise, no fees.</p>
+        <p class="pillar__body">Post gear directly to skiers who know what it is and what it's worth.</p>
       </div>
     </div>
   </section>

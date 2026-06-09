@@ -321,23 +321,24 @@ function initScrollNav() {
 function initPriceCounter() {
   const priceEl = document.querySelector('.val-s__price');
   const stateEl = document.querySelector('.val-s--value');
-  if (!priceEl || !stateEl) return;
+  const panel   = document.querySelector('.val-panel');
+  if (!priceEl || !stateEl || !panel) return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  const CYCLE  = 12000; // ms — must match the CSS animation-duration
-  const FROM   = 0.71;  // value state enters
-  const TO     = 0.79;  // counter finishes; price holds for the rest
+  const CYCLE  = 12000; // ms — must match CSS animation-duration
+  const FROM   = 0.71;
+  const TO     = 0.79;
   const TARGET = 420;
+  let   rafId  = null;
 
   function frame() {
-    // Stay in sync by reading directly from the CSS animation's currentTime
     const anim    = stateEl.getAnimations()?.[0];
     const rawTime = anim?.currentTime;
     if (rawTime != null) {
       const pct = (rawTime % CYCLE) / CYCLE;
       if (pct >= FROM && pct < TO) {
         const t     = (pct - FROM) / (TO - FROM);
-        const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
+        const eased = 1 - Math.pow(1 - t, 3);
         priceEl.textContent = '$' + Math.round(eased * TARGET);
       } else if (pct >= TO && pct < 0.985) {
         priceEl.textContent = '$' + TARGET;
@@ -345,10 +346,19 @@ function initPriceCounter() {
         priceEl.textContent = '$0';
       }
     }
-    requestAnimationFrame(frame);
+    rafId = requestAnimationFrame(frame);
   }
 
-  requestAnimationFrame(frame);
+  // Only run the rAF loop while the panel is visible in the viewport
+  new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        if (!rafId) rafId = requestAnimationFrame(frame);
+      } else {
+        if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+      }
+    });
+  }, { threshold: 0.1 }).observe(panel);
 }
 
 /* ── Magnetic CTA ────────────────────────────────────────────────────────── */
@@ -378,10 +388,31 @@ function initMagneticCta() {
   document.addEventListener('mousemove', onMove, { passive: true });
 }
 
+/* ── Scroll reveal ───────────────────────────────────────────────────────── */
+function initReveal() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('reveal--visible');
+      io.unobserve(e.target);
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
+
+  document.querySelectorAll('[data-reveal]').forEach(el => {
+    const d = el.dataset.delay;
+    if (d) el.style.transitionDelay = d + 'ms';
+    el.classList.add('reveal--ready');
+    io.observe(el);
+  });
+}
+
 /* ── Init ────────────────────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   initSnow();
   initScrollNav();
   initPriceCounter();
   initMagneticCta();
+  initReveal();
 });
