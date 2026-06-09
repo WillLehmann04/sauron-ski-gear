@@ -2,10 +2,11 @@
   <div class="nav__inner">
     <a class="nav__logo" href="/">Gear<span>Worth</span></a>
     <div class="nav__links" aria-hidden="true">
-      <span>Estimate</span>
-      <span>Buy</span>
-      <span>Sell</span>
+      <span class="nav__link">Estimate</span>
+      <span class="nav__link">Buy</span>
+      <span class="nav__link">Sell</span>
     </div>
+    <a class="nav__cta" href="#join">Join the list</a>
   </div>
 </nav>
 
@@ -37,14 +38,27 @@
       <div class="val-s val-s--gear">
         <p class="val-s__eyebrow">What's your gear?</p>
         <div class="val-s__rule"><span class="val-s__rule-fill"></span></div>
-        <div class="val-input">
-          <span class="val-input__text">Salomon QST 92</span>
-          <span class="val-input__cursor" aria-hidden="true"></span>
-        </div>
-        <div class="val-pills">
-          <span class="val-pill">Good condition</span>
-          <span class="val-pill">182cm</span>
-          <span class="val-pill">2021</span>
+        <div class="val-form">
+          <div class="val-form__row val-form__row--1">
+            <span class="val-form__label">Brand</span>
+            <span class="val-form__value">Salomon</span>
+          </div>
+          <div class="val-form__row val-form__row--2">
+            <span class="val-form__label">Model</span>
+            <span class="val-form__value">QST 92</span>
+          </div>
+          <div class="val-form__row val-form__row--3">
+            <span class="val-form__label">Year</span>
+            <span class="val-form__value">2021</span>
+          </div>
+          <div class="val-form__row val-form__row--4">
+            <span class="val-form__label">Condition</span>
+            <span class="val-form__value">Good</span>
+          </div>
+          <div class="val-form__row val-form__row--5">
+            <span class="val-form__label">Size</span>
+            <span class="val-form__value">182cm</span>
+          </div>
         </div>
         <p class="val-cta-mock">Estimate value &#x2192;</p>
       </div>
@@ -56,7 +70,11 @@
         <div class="val-s__progress">
           <div class="val-s__progress-fill"></div>
         </div>
-        <p class="val-s__scan-label">Comparing 140 recent sales&hellip;</p>
+        <div class="val-s__scan-labels">
+          <p class="val-s__scan-label val-s__scan-label--1">Searching 14,000+ listings&hellip;</p>
+          <p class="val-s__scan-label val-s__scan-label--2">Found 140 comparable sales</p>
+          <p class="val-s__scan-label val-s__scan-label--3">Calculating your range&hellip;</p>
+        </div>
       </div>
 
       <div class="val-s val-s--value">
@@ -66,6 +84,7 @@
         <div class="val-s__range">
           <span class="val-s__range-lo">$280</span>
           <div class="val-s__range-track">
+            <span class="val-s__range-fill"></span>
             <span class="val-s__range-dot"></span>
           </div>
           <span class="val-s__range-hi">$560</span>
@@ -97,7 +116,7 @@
     </div>
   </section>
 
-  <section class="form-section" aria-label="Join the waitlist">
+  <section class="form-section" id="join" aria-label="Join the waitlist">
     <div class="form-section__inner">
       <div class="form-card">
         <h2 class="form-card__title">Join the waitlist</h2>

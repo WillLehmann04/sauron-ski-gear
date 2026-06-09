@@ -59,9 +59,11 @@ varying float v_al;
 varying float v_ti;
 void main(){
   vec2 uv=gl_PointCoord-0.5;
-  float a=smoothstep(0.5,0.16,length(uv))*v_al;
-  vec3 col=mix(vec3(1.0),vec3(0.72,0.91,1.0),v_ti);
-  gl_FragColor=vec4(col,a);
+  float d=length(uv);
+  float soft=smoothstep(0.5,0.15,d)*v_al;
+  float core=smoothstep(0.18,0.0,d)*0.65*v_al;
+  vec3 col=mix(vec3(1.0),vec3(0.70,0.90,1.0),v_ti);
+  gl_FragColor=vec4(col,clamp(soft+core,0.0,1.0));
 }`;
 
 /* ── WebGL snow particle system ──────────────────────────────────────────── */
@@ -117,12 +119,18 @@ class SnowGL {
 
   _newPt(scatter) {
     const w = this.canvas.width || 800, h = this.canvas.height || 600;
+    // depth 0 = background (tiny, fast, dim)  depth 1 = foreground (large, slow, bright)
+    const depth = Math.pow(Math.random(), 0.65); // slight bias toward foreground
+    const d2    = depth * depth;
+    const szMin = 0.6  + d2 * 2.9;
+    const szMax = 1.6  + d2 * 7.4;
+    const sz    = Math.min((szMin + Math.random() * (szMax - szMin)) * this.dpr, 11 * this.dpr);
+    const al    = Math.min(0.10 + depth * 0.38 + Math.random() * (0.15 + depth * 0.25), 0.88);
+    const sp    = (1.10 - depth * 0.82) * (Math.random() * 0.32 + 0.76);
     return {
-      x:  Math.random() * w,
-      y:  scatter ? Math.random() * h : -Math.random() * 24,
-      sz: (Math.random() * 2.6 + 0.9) * this.dpr,
-      al: Math.random() * 0.52 + 0.2,
-      sp: Math.random() * 0.52 + 0.35,
+      x: Math.random() * w,
+      y: scatter ? Math.random() * h : -(Math.random() * 28 + sz / this.dpr),
+      sz, al, sp, depth,
       ox: Math.random() * 800,
     };
   }
@@ -132,7 +140,11 @@ class SnowGL {
     this.canvas.width  = Math.round(this.canvas.clientWidth  * this.dpr);
     this.canvas.height = Math.round(this.canvas.clientHeight * this.dpr);
     this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-    this.pts.forEach(p => { p.sz = (Math.random() * 2.6 + 0.9) * this.dpr; });
+    this.pts.forEach(p => {
+      const d2 = p.depth * p.depth;
+      const szMin = 0.6 + d2 * 2.9, szMax = 1.6 + d2 * 7.4;
+      p.sz = Math.min((szMin + Math.random() * (szMax - szMin)) * this.dpr, 11 * this.dpr);
+    });
   }
 
   scatter() {
@@ -154,18 +166,21 @@ class SnowGL {
     const w = canvas.width, h = canvas.height;
     this.time += dt;
 
-    // Scale noise to CSS-pixel space so density is DPR-independent
     const S  = 0.0007 / dpr;
     const T  = this.time * 0.00022;
     const MR = 130 * dpr;
+
+    // Slow sinusoidal wind gust — period ~11s. Deeper/fg flakes carry more on the wind.
+    const wind = Math.sin(this.time * 0.000571) * 0.55 + snoise(this.time * 0.000065, 77) * 0.28;
 
     for (let i = 0; i < this.N; i++) {
       const p   = this.pts[i];
       const nx  = snoise(p.x * S + p.ox * 0.0005, p.y * S + T);
       const ny  = snoise(p.x * S + p.ox * 0.0005 + 50, p.y * S + T + 50);
       const spd = p.sp * dt * 0.044;
+      const wf  = 0.28 + p.depth * 0.72; // fg particles caught more by wind
 
-      p.x += nx * spd * 0.75;
+      p.x += (nx * 0.75 + wind * wf) * spd;
       p.y += (ny * 0.4 + 0.6) * spd; // 60% downward gravity bias
 
       // Mouse repulsion (quadratic falloff)
@@ -182,8 +197,8 @@ class SnowGL {
       else if (p.x < -8)     p.x = w + 8;
       else if (p.x > w + 8)  p.x = -8;
 
-      // Aurora tint: top 45% of hero gets an ice-blue shift
-      const tint = Math.max(0, 1 - (p.y / h) / 0.45) * 0.58;
+      // Aurora tint: top 62% of hero gets ice-blue shift, stronger than before
+      const tint = Math.max(0, 1 - (p.y / h) / 0.62) * 0.72;
       const o    = i * 5;
       this.data[o]     = p.x;
       this.data[o + 1] = p.y;
@@ -209,7 +224,7 @@ function initSnow() {
 
   _seedNoise();
 
-  const N      = window.innerWidth < 640 ? 160 : 420;
+  const N      = window.innerWidth < 640 ? 260 : 680;
   const snowgl = new SnowGL(canvas, N);
 
   if (snowgl.gl) {
@@ -278,14 +293,95 @@ function initScrollNav() {
 
   const THRESHOLD = 40;
   let ticking = false;
-  function update() { nav.classList.toggle('nav--solid', window.scrollY > THRESHOLD); ticking = false; }
+
+  function update() {
+    const scrolled = window.scrollY;
+    const total    = document.documentElement.scrollHeight - window.innerHeight;
+
+    // Class-based morph fallback (Firefox + older browsers)
+    nav.classList.toggle('nav--solid', scrolled > THRESHOLD);
+
+    // Progress line: drives ::after width via CSS custom property
+    // (overridden to transform-based in browsers with animation-timeline: scroll())
+    if (total > 0) {
+      nav.style.setProperty('--scroll-pct', Math.min(scrolled / total, 1));
+    }
+
+    ticking = false;
+  }
+
   window.addEventListener('scroll', () => {
     if (!ticking) { requestAnimationFrame(update); ticking = true; }
   }, { passive: true });
+
+  update(); // set initial state
+}
+
+/* ── Price counter ───────────────────────────────────────────────────────── */
+function initPriceCounter() {
+  const priceEl = document.querySelector('.val-s__price');
+  const stateEl = document.querySelector('.val-s--value');
+  if (!priceEl || !stateEl) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const CYCLE  = 12000; // ms — must match the CSS animation-duration
+  const FROM   = 0.71;  // value state enters
+  const TO     = 0.79;  // counter finishes; price holds for the rest
+  const TARGET = 420;
+
+  function frame() {
+    // Stay in sync by reading directly from the CSS animation's currentTime
+    const anim    = stateEl.getAnimations()?.[0];
+    const rawTime = anim?.currentTime;
+    if (rawTime != null) {
+      const pct = (rawTime % CYCLE) / CYCLE;
+      if (pct >= FROM && pct < TO) {
+        const t     = (pct - FROM) / (TO - FROM);
+        const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
+        priceEl.textContent = '$' + Math.round(eased * TARGET);
+      } else if (pct >= TO && pct < 0.985) {
+        priceEl.textContent = '$' + TARGET;
+      } else {
+        priceEl.textContent = '$0';
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  requestAnimationFrame(frame);
+}
+
+/* ── Magnetic CTA ────────────────────────────────────────────────────────── */
+function initMagneticCta() {
+  const cta = document.querySelector('.nav__cta');
+  if (!cta || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const RADIUS = 88;  // px — field radius beyond button edges
+  const PULL   = 0.38; // strength (fraction of offset to apply)
+
+  function onMove(e) {
+    const r  = cta.getBoundingClientRect();
+    const cx = r.left + r.width  / 2;
+    const cy = r.top  + r.height / 2;
+    const dx = e.clientX - cx;
+    const dy = e.clientY - cy;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist < RADIUS) {
+      const falloff = (1 - dist / RADIUS) * (1 - dist / RADIUS); // quadratic ease
+      cta.style.transform = `translate(${dx * PULL * falloff}px, ${dy * PULL * falloff}px)`;
+    } else {
+      cta.style.transform = '';
+    }
+  }
+
+  document.addEventListener('mousemove', onMove, { passive: true });
 }
 
 /* ── Init ────────────────────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   initSnow();
   initScrollNav();
+  initPriceCounter();
+  initMagneticCta();
 });

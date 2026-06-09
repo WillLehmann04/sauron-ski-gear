@@ -40,21 +40,175 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(10, 22, 35, 0.55);
-  backdrop-filter: blur(20px) saturate(120%);
-  -webkit-backdrop-filter: blur(20px) saturate(120%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  --scroll-pct: 0;
+  background: rgba(8, 18, 30, 0.62);
+  backdrop-filter: blur(26px) saturate(190%) brightness(0.92);
+  -webkit-backdrop-filter: blur(26px) saturate(190%) brightness(0.92);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   height: 56px;
   display: flex;
   align-items: center;
   padding: 0 max(20px, 5vw);
-  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    background      0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color    0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow      0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    backdrop-filter 0.45s ease;
 }
 
+@keyframes itemIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Glass top-edge specular highlight */
+.nav::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 8%;
+  right: 8%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.24) 35%,
+    rgba(255, 255, 255, 0.14) 65%,
+    transparent 100%
+  );
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+.nav--solid::before { opacity: 0; }
+
+/* Progress line — gradient glow, JS-driven width (fallback) */
+.nav::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 1.5px;
+  width: calc(var(--scroll-pct) * 100%);
+  transform-origin: left;
+  background: linear-gradient(to right,
+    rgba(184, 214, 236, 0.25),
+    rgba(184, 214, 236, 0.95)
+  );
+  box-shadow: 0 0 7px 1px rgba(184, 214, 236, 0.45);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.nav--solid::after {
+  background: linear-gradient(to right,
+    rgba(58, 122, 170, 0.15),
+    rgba(58, 122, 170, 0.72)
+  );
+  box-shadow: 0 0 7px 1px rgba(58, 122, 170, 0.3);
+}
+
+/* ── Scroll-driven morph + entrance — Chrome / Safari / Edge ── */
+@supports (animation-timeline: scroll()) {
+  .nav {
+    animation: navBgMorph linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0px 220px;
+    transition: none;
+  }
+
+  .nav::before {
+    animation: navEdgeFade linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0px 220px;
+    transition: none;
+  }
+
+  .nav__logo {
+    animation:
+      itemIn       0.65s 0.08s cubic-bezier(0.16, 1, 0.3, 1) both,
+      navLogoMorph linear both;
+    animation-timeline: auto, scroll(root);
+    animation-range: normal, 0px 220px;
+    transition: none;
+  }
+
+  .nav__links {
+    animation:
+      itemIn        0.65s 0.13s cubic-bezier(0.16, 1, 0.3, 1) both,
+      navLinksMorph linear both;
+    animation-timeline: auto, scroll(root);
+    animation-range: normal, 0px 220px;
+    transition: none;
+  }
+
+  .nav__cta {
+    animation:
+      itemIn      0.65s 0.19s cubic-bezier(0.16, 1, 0.3, 1) both,
+      navCtaMorph linear both;
+    animation-timeline: auto, scroll(root);
+    animation-range: normal, 0px 220px;
+    transition:
+      background 0.15s ease,
+      transform  0.42s cubic-bezier(0.22, 0.9, 0.36, 1),
+      box-shadow 0.2s  ease;
+  }
+
+  .nav::after {
+    width: 100%;
+    animation: navProgress linear both;
+    animation-timeline: scroll(root);
+  }
+
+  @keyframes navBgMorph {
+    from {
+      background: rgba(8, 18, 30, 0.62);
+      border-bottom-color: rgba(255, 255, 255, 0.07);
+      box-shadow: none;
+      backdrop-filter: blur(26px) saturate(190%) brightness(0.92);
+      -webkit-backdrop-filter: blur(26px) saturate(190%) brightness(0.92);
+    }
+    to {
+      background: rgba(228, 244, 253, 0.97);
+      border-bottom-color: rgba(180, 210, 235, 0.55);
+      box-shadow: 0 1px 14px rgba(28, 60, 90, 0.09), 0 4px 28px rgba(28, 60, 90, 0.04);
+      backdrop-filter: blur(20px) saturate(120%) brightness(1.02);
+      -webkit-backdrop-filter: blur(20px) saturate(120%) brightness(1.02);
+    }
+  }
+
+  @keyframes navEdgeFade {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+  }
+
+  @keyframes navLogoMorph {
+    from { color: rgba(255, 255, 255, 0.95); }
+    to   { color: #1c2d3a; }
+  }
+
+  @keyframes navLinksMorph {
+    from { color: rgba(210, 235, 252, 0.85); }
+    to   { color: #5a7088; }
+  }
+
+  @keyframes navCtaMorph {
+    from { color: rgba(255, 255, 255, 0.88); border-color: rgba(255, 255, 255, 0.27); }
+    to   { color: #1c2d3a; border-color: rgba(28, 45, 58, 0.28); }
+  }
+
+  @keyframes navProgress {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+}
+
+/* ── JS class fallback (Firefox + older browsers) ── */
 .nav--solid {
-  background: rgba(228, 243, 252, 0.96);
-  border-bottom-color: rgba(180, 210, 235, 0.6);
-  box-shadow: 0 1px 8px rgba(28, 60, 90, 0.08);
+  background: rgba(228, 244, 253, 0.97);
+  border-bottom-color: rgba(180, 210, 235, 0.55);
+  box-shadow: 0 1px 14px rgba(28, 60, 90, 0.09), 0 4px 28px rgba(28, 60, 90, 0.04);
+  backdrop-filter: blur(20px) saturate(120%) brightness(1.02);
+  -webkit-backdrop-filter: blur(20px) saturate(120%) brightness(1.02);
 }
 
 .nav__inner {
@@ -63,7 +217,7 @@ body {
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 24px;
 }
 
 .nav__logo {
@@ -74,10 +228,15 @@ body {
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.95);
   text-decoration: none;
-  transition: color 0.3s ease;
+  flex-shrink: 0;
+  animation: itemIn 0.65s 0.08s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition: color 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.nav__logo:hover { text-shadow: 0 0 22px rgba(255, 255, 255, 0.2); }
+
 .nav--solid .nav__logo { color: var(--navy); }
+.nav--solid .nav__logo:hover { text-shadow: none; }
 
 .nav__logo span { color: var(--orange-cta); }
 
@@ -89,10 +248,104 @@ body {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: rgba(210, 235, 252, 0.85);
-  transition: color 0.3s ease;
+  margin-right: auto;
+  animation: itemIn 0.65s 0.13s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition: color 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nav--solid .nav__links { color: var(--blue-secondary); }
+
+.nav__link {
+  position: relative;
+  cursor: default;
+  user-select: none;
+  padding-bottom: 2px;
+  transition: opacity 0.2s ease;
+}
+
+/* Underline grows from center on hover */
+.nav__link::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  width: 0;
+  height: 1px;
+  background: currentColor;
+  transform: translateX(-50%);
+  transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav__link:hover { opacity: 0.7; }
+.nav__link:hover::after { width: 110%; }
+
+/* ── Nav CTA pill — with shimmer + magnetic JS target ── */
+.nav__cta {
+  position: relative;
+  overflow: hidden;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.88);
+  padding: 6px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.27);
+  border-radius: 20px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  will-change: transform;
+  animation: itemIn 0.65s 0.19s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition:
+    color        0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    background   0.15s ease,
+    transform    0.42s cubic-bezier(0.22, 0.9, 0.36, 1),
+    box-shadow   0.2s  ease;
+}
+
+/* Periodic shimmer sweep */
+.nav__cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  left: -130%;
+  width: 65%;
+  background: linear-gradient(105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.18) 48%,
+    rgba(255, 255, 255, 0.08) 52%,
+    transparent 100%
+  );
+  animation: ctaShimmer 5.5s cubic-bezier(0.4, 0, 0.6, 1) 3s infinite;
+  pointer-events: none;
+}
+
+@keyframes ctaShimmer {
+  0%   { left: -130%; }
+  26%  { left: 130%;  }
+  100% { left: 130%;  }
+}
+
+.nav__cta:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.46);
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.08), inset 0 0 8px rgba(255, 255, 255, 0.04);
+}
+
+.nav--solid .nav__cta {
+  color: var(--navy);
+  border-color: rgba(28, 45, 58, 0.25);
+}
+
+.nav--solid .nav__cta::before { opacity: 0.35; }
+
+.nav--solid .nav__cta:hover {
+  background: rgba(28, 45, 58, 0.06);
+  border-color: rgba(28, 45, 58, 0.45);
+  box-shadow: 0 0 14px rgba(28, 60, 90, 0.07);
+}
 
 /* ── Hero ──────────────────────────────────────── */
 .hero {
@@ -169,7 +422,7 @@ body {
   position: relative;
   width: 100%;
   max-width: 440px;
-  height: 280px;
+  height: 290px;
   background: rgba(3, 12, 22, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 18px;
@@ -177,6 +430,13 @@ body {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
     0 28px 72px rgba(0, 0, 0, 0.35);
+  transition:
+    opacity  0.9s cubic-bezier(0.16, 1, 0.3, 1) 600ms,
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) 600ms;
+}
+
+@starting-style {
+  .val-panel { opacity: 0; transform: translateX(32px) translateY(12px); }
 }
 
 .val-panel::after {
@@ -228,6 +488,38 @@ body {
   94%      { opacity: 1; filter: blur(0);    transform: translateY(0); }
   99%      { opacity: 0; filter: blur(14px); transform: translateY(-8px); }
   100%     { opacity: 0; filter: blur(14px); transform: translateY(10px); }
+}
+
+/* ── Scan beam ─────────────────────────────────── */
+.val-s--scan::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 48px;
+  background: linear-gradient(to bottom,
+    rgba(90, 170, 255, 0.0)   0%,
+    rgba(90, 170, 255, 0.08)  30%,
+    rgba(184, 225, 255, 0.85) 58%,
+    rgba(220, 240, 255, 1.0)  63%,
+    rgba(90, 170, 255, 0.08)  80%,
+    rgba(90, 170, 255, 0.0)   100%
+  );
+  box-shadow:
+    0 0 12px 3px rgba(90, 170, 255, 0.35),
+    0 0 28px 8px rgba(90, 170, 255, 0.12);
+  z-index: 2;
+  pointer-events: none;
+  animation: scanBeam 12s linear infinite;
+}
+
+@keyframes scanBeam {
+  0%, 33%  { transform: translateY(-48px); opacity: 0; }
+  38%      { transform: translateY(-48px); opacity: 1; }
+  63%      { transform: translateY(338px); opacity: 0.6; }
+  65%      { opacity: 0; }
+  66%, 100%{ transform: translateY(-48px); opacity: 0; }
 }
 
 /* ── Eyebrow ───────────────────────────────────── */
@@ -283,6 +575,17 @@ body {
   line-height: 0.88;
   color: #ffffff;
   margin-bottom: 14px;
+  transform-origin: left center;
+  animation: vsPriceIn 12s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+@keyframes vsPriceIn {
+  0%, 66%  { transform: scale(0.82) translateY(6px); filter: blur(10px); opacity: 0; }
+  72%      { transform: scale(1.05) translateY(0);   filter: blur(0);    opacity: 1; }
+  76%      { transform: scale(1.0)  translateY(0);   filter: blur(0);    opacity: 1; }
+  94%      { transform: scale(1.0)  translateY(0);   filter: blur(0);    opacity: 1; }
+  99%      { transform: scale(0.95) translateY(-4px); filter: blur(6px); opacity: 0; }
+  100%     { transform: scale(0.82) translateY(6px); filter: blur(10px); opacity: 0; }
 }
 
 /* ── Rule ──────────────────────────────────────── */
@@ -368,11 +671,11 @@ body {
 
 /* ── Progress bar (scan state) ─────────────────── */
 .val-s__progress {
-  height: 2px;
+  height: 3px;
   background: rgba(255, 255, 255, 0.06);
-  border-radius: 2px;
-  overflow: hidden;
+  border-radius: 3px;
   margin-bottom: 14px;
+  position: relative;
 }
 
 .val-s__progress-fill {
@@ -380,11 +683,13 @@ body {
   width: 100%;
   background: linear-gradient(90deg,
     rgba(90, 165, 230, 0.5)  0%,
-    rgba(160, 218, 255, 0.9) 100%);
-  border-radius: 2px;
+    rgba(160, 218, 255, 1.0) 85%,
+    rgba(220, 242, 255, 1.0) 100%);
+  border-radius: 3px;
   transform: scaleX(0);
   transform-origin: left;
   animation: vsProgress 12s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  box-shadow: 0 0 10px 2px rgba(160, 218, 255, 0.55);
 }
 
 @keyframes vsProgress {
@@ -396,71 +701,160 @@ body {
   100%     { transform: scaleX(0); }
 }
 
+/* Scan labels: 3 phases cycle within the scan window (38%–66%) */
+.val-s__scan-labels {
+  position: relative;
+  height: 17px;
+}
+
 .val-s__scan-label {
+  position: absolute;
+  top: 0;
+  left: 0;
   font-family: 'DM Sans', sans-serif;
   font-size: 11px;
   font-weight: 300;
-  color: rgba(255, 255, 255, 0.28);
+  color: rgba(255, 255, 255, 0.32);
+  white-space: nowrap;
+  opacity: 0;
 }
 
-/* ── Input mock (gear state) ───────────────────── */
-.val-input {
+/* Phase 1: 38%–48%  Phase 2: 48%–57%  Phase 3: 57%–65% */
+.val-s__scan-label--1 { animation: vsScanLbl1 12s ease-out infinite; }
+.val-s__scan-label--2 { animation: vsScanLbl2 12s ease-out infinite; }
+.val-s__scan-label--3 { animation: vsScanLbl3 12s ease-out infinite; }
+
+@keyframes vsScanLbl1 {
+  0%, 37%  { opacity: 0; transform: translateY(4px); }
+  39%      { opacity: 1; transform: translateY(0); }
+  47%      { opacity: 1; transform: translateY(0); }
+  49%      { opacity: 0; transform: translateY(-4px); }
+  100%     { opacity: 0; }
+}
+@keyframes vsScanLbl2 {
+  0%, 49%  { opacity: 0; transform: translateY(4px); }
+  51%      { opacity: 1; transform: translateY(0); }
+  56%      { opacity: 1; transform: translateY(0); }
+  58%      { opacity: 0; transform: translateY(-4px); }
+  100%     { opacity: 0; }
+}
+@keyframes vsScanLbl3 {
+  0%, 58%  { opacity: 0; transform: translateY(4px); }
+  60%      { opacity: 1; transform: translateY(0); }
+  64%      { opacity: 1; transform: translateY(0); }
+  66%      { opacity: 0; }
+  100%     { opacity: 0; }
+}
+
+/* Model name briefly brightens as the scan beam passes over */
+.val-s--scan .val-s__model--dim {
+  animation: vsModelFlare 12s ease-in-out infinite;
+}
+
+@keyframes vsModelFlare {
+  0%, 33%  { color: rgba(255, 255, 255, 0.18); }
+  38%      { color: rgba(255, 255, 255, 0.18); }
+  48%      { color: rgba(255, 255, 255, 0.60); }
+  56%      { color: rgba(255, 255, 255, 0.32); }
+  63%      { color: rgba(255, 255, 255, 0.18); }
+  66%, 100%{ color: rgba(255, 255, 255, 0.18); }
+}
+
+/* ── Form rows (gear state) ────────────────────── */
+.val-form {
   display: flex;
-  align-items: center;
-  gap: 2px;
-  padding: 11px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.13);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.04);
-  margin-bottom: 14px;
-}
-
-.val-input__text {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.82);
+  flex-direction: column;
+  gap: 9px;
   flex: 1;
 }
 
-.val-input__cursor {
-  display: block;
-  width: 1.5px;
-  height: 17px;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 1px;
-  flex-shrink: 0;
-  animation: valCursorBlink 1.1s step-end infinite;
-}
-
-@keyframes valCursorBlink {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: 0; }
-}
-
-.val-pills {
+.val-form__row {
   display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 16px;
 }
 
-.val-pill {
+.val-form__label {
   font-family: 'DM Sans', sans-serif;
-  font-size: 11px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.4);
-  padding: 3px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.25);
+  width: 72px;
+  flex-shrink: 0;
 }
 
+.val-form__value {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.82);
+  opacity: 0;
+}
+
+/* Each value appears in sequence, staggered ~3% apart within the 12s loop.
+   Gear state is visible 5%–28%; values start at 7% and finish by 21%. */
+.val-form__row--1 .val-form__value { animation: vsVal1 12s ease-out infinite; }
+.val-form__row--2 .val-form__value { animation: vsVal2 12s ease-out infinite; }
+.val-form__row--3 .val-form__value { animation: vsVal3 12s ease-out infinite; }
+.val-form__row--4 .val-form__value { animation: vsVal4 12s ease-out infinite; }
+.val-form__row--5 .val-form__value { animation: vsVal5 12s ease-out infinite; }
+
+@keyframes vsVal1 {
+  0%, 7%   { opacity: 0; transform: translateX(-5px); }
+  9.5%     { opacity: 1; transform: translateX(0); }
+  28%      { opacity: 1; }
+  33%      { opacity: 0; }
+  100%     { opacity: 0; }
+}
+@keyframes vsVal2 {
+  0%, 10%  { opacity: 0; transform: translateX(-5px); }
+  12.5%    { opacity: 1; transform: translateX(0); }
+  28%      { opacity: 1; }
+  33%      { opacity: 0; }
+  100%     { opacity: 0; }
+}
+@keyframes vsVal3 {
+  0%, 13%  { opacity: 0; transform: translateX(-5px); }
+  15.5%    { opacity: 1; transform: translateX(0); }
+  28%      { opacity: 1; }
+  33%      { opacity: 0; }
+  100%     { opacity: 0; }
+}
+@keyframes vsVal4 {
+  0%, 16%  { opacity: 0; transform: translateX(-5px); }
+  18.5%    { opacity: 1; transform: translateX(0); }
+  28%      { opacity: 1; }
+  33%      { opacity: 0; }
+  100%     { opacity: 0; }
+}
+@keyframes vsVal5 {
+  0%, 19%  { opacity: 0; transform: translateX(-5px); }
+  21.5%    { opacity: 1; transform: translateX(0); }
+  28%      { opacity: 1; }
+  33%      { opacity: 0; }
+  100%     { opacity: 0; }
+}
+
+/* CTA appears once all fields are filled */
 .val-cta-mock {
   font-family: 'DM Sans', sans-serif;
   font-size: 12px;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.28);
-  margin-top: auto;
   letter-spacing: 0.02em;
+  margin-top: 16px;
+  opacity: 0;
+  animation: vsFormCta 12s ease-out infinite;
+}
+
+@keyframes vsFormCta {
+  0%, 22%  { opacity: 0; }
+  24.5%    { opacity: 1; }
+  28%      { opacity: 1; }
+  33%      { opacity: 0; }
+  100%     { opacity: 0; }
 }
 
 /* ── Range indicator (value state) ────────────── */
@@ -487,6 +881,31 @@ body {
   position: relative;
 }
 
+/* Fill sweeps from left to dot position before the dot snaps in */
+.val-s__range-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg,
+    rgba(90, 165, 230, 0.5),
+    rgba(184, 225, 255, 0.7) 50%,
+    transparent 50%);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: vsRangeFill 12s ease-out infinite;
+}
+
+@keyframes vsRangeFill {
+  0%, 71%  { transform: scaleX(0); opacity: 0; }
+  73%      { opacity: 1; }
+  78%      { transform: scaleX(1); opacity: 1; }
+  94%      { transform: scaleX(1); opacity: 1; }
+  99%      { transform: scaleX(0); opacity: 0; }
+  100%     { transform: scaleX(0); opacity: 0; }
+}
+
 .val-s__range-dot {
   position: absolute;
   top: 50%;
@@ -500,6 +919,19 @@ body {
   animation: vsRangeDot 12s ease-out infinite;
 }
 
+.val-s__range-dot::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1px solid rgba(185, 225, 255, 0.7);
+  transform: translate(-50%, -50%) scale(1);
+  animation: vsRingPulse 12s ease-out infinite;
+}
+
 @keyframes vsRangeDot {
   0%, 76%  { transform: translate(-50%, -50%) scale(0);    opacity: 0; }
   80%      { transform: translate(-50%, -50%) scale(1.35); opacity: 1; }
@@ -507,6 +939,14 @@ body {
   94%      { transform: translate(-50%, -50%) scale(1);    opacity: 1; }
   99%      { transform: translate(-50%, -50%) scale(0);    opacity: 0; }
   100%     { transform: translate(-50%, -50%) scale(0);    opacity: 0; }
+}
+
+@keyframes vsRingPulse {
+  0%, 80%  { transform: translate(-50%, -50%) scale(1);   opacity: 0; }
+  82%      { transform: translate(-50%, -50%) scale(1.6); opacity: 0.8; }
+  87%      { transform: translate(-50%, -50%) scale(3.5); opacity: 0; }
+  94%      { opacity: 0; }
+  100%     { opacity: 0; }
 }
 
 .val-s__comps {
@@ -881,7 +1321,7 @@ body {
   .hero__title { font-size: clamp(60px, 16vw, 88px); }
   .hero__meta { margin-top: 24px; }
   .hero__visual { justify-content: center; }
-  .val-panel { max-width: 380px; height: 260px; }
+  .val-panel { max-width: 380px; height: 275px; }
   .val-s__price { font-size: 76px; }
 
   .preview { padding: 36px 20px 28px; }
@@ -898,11 +1338,23 @@ body {
   .pillar__head { font-size: clamp(40px, 12vw, 56px); }
 
   .nav__links { display: none; }
+  .nav__inner { gap: 12px; }
+  .nav__cta { font-size: 10px; padding: 5px 13px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .nav__cta::before { display: none; }
+  .nav__link::after { transition: none !important; }
+  .val-panel { transition: none !important; opacity: 1 !important; transform: none !important; }
   .val-s--gear { animation: none !important; opacity: 1; filter: none; transform: none; }
   .val-s--gear .val-s__rule-fill { animation: none !important; transform: scaleX(1); }
+  .val-s--gear .val-form__value { animation: none !important; opacity: 1; transform: none; }
+  .val-s--gear .val-cta-mock { animation: none !important; opacity: 1; }
+  .val-s__price { animation: none !important; opacity: 1; transform: none; filter: none; }
+  .val-s__scan-label--1 { animation: none !important; opacity: 1; transform: none; }
+  .val-s__range-fill { animation: none !important; transform: scaleX(1); opacity: 1; }
+  .val-s__range-dot::after { animation: none !important; opacity: 0; }
+  .val-s--scan::before { display: none; }
   .val-s__dot { animation: none !important; opacity: 0.7; }
 }
