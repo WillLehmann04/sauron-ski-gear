@@ -41,10 +41,13 @@ const WaitlistForm = {
   },
   template: `
     <div v-if="submitted" class="form-success">
-      <svg class="form-success__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-      </svg>
-      <p class="form-success__msg">You're on the list! We'll be in touch.</p>
+      <div class="form-success__mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+      <p class="form-success__title">You're in.</p>
+      <p class="form-success__body">First email, first access. We'll reach you at <strong>{{ email }}</strong> when GearWorth launches.</p>
     </div>
     <form v-else class="form" @submit.prevent="submit" novalidate>
       <div class="form__field">
@@ -75,7 +78,7 @@ const WaitlistForm = {
       <p v-if="error" class="form__error" role="alert">{{ error }}</p>
       <button class="form__submit" type="submit" :disabled="submitting">
         <span v-if="submitting" class="form__spinner"></span>
-        <span>{{ submitting ? 'Joining…' : 'Join the waitlist' }}</span>
+        <span>{{ submitting ? 'Joining…' : 'Get first access →' }}</span>
       </button>
     </form>
   `,
