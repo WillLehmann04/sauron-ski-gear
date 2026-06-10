@@ -66,7 +66,8 @@ Keep other choices simple and swappable. Add dependencies deliberately.
 │           └── WaitlistForm.js  ← Vue component (ES module, no build step)
 │
 ├── data/
-│   └── waitlist.json       ← persisted signups; gitignored in production
+│   ├── waitlist.json       ← consumer signups; gitignored
+│   └── shops.json          ← ski-shop signups (B2B track); gitignored
 │
 └── docs/
     ├── README.md           ← docs index
@@ -80,7 +81,7 @@ Keep other choices simple and swappable. Add dependencies deliberately.
 - **`lib/`** — Pure utilities and thin interfaces. `storage.js` exposes `read(collection)` / `write(collection, data)` so the backing store can be swapped.
 - **`views/`** — EJS only. Layouts wrap pages; partials are reused fragments. No business logic in templates.
 - **`public/`** — Static assets served as-is. Vue components live here as ES modules (no build step required for now).
-- **`data/`** — Runtime data files (e.g. `waitlist.json`). Add to `.gitignore` if sensitive; keep a `.gitkeep` to preserve the directory.
+- **`data/`** — Runtime data files. Consumer signups in `waitlist.json`, ski-shop signups in `shops.json` (separate collections so the two demand signals stay independent). Both gitignored; keep a `.gitkeep` to preserve the directory.
 - **`docs/`** — One Markdown file per feature/module. `docs/README.md` is the index. Keep in sync with code.
 
 ---

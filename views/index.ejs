@@ -1,6 +1,12 @@
 <nav class="nav" id="nav">
   <div class="nav__inner">
-    <a class="nav__logo" href="/">Gear<span>Worth</span></a>
+    <a class="nav__logo" href="/">
+      <svg class="nav__logo-icon" viewBox="0 0 20 15" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1 14 L8 2 L15 14" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+        <path d="M10 14 L16 5 L19 14" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" opacity="0.40"/>
+      </svg>
+      Gear<span>Worth</span>
+    </a>
     <div class="nav__links" aria-hidden="true">
       <span class="nav__link" title="Coming soon">Estimate</span>
       <span class="nav__link" title="Coming soon">Buy</span>
@@ -32,7 +38,7 @@
 
   <div class="hero__slope" aria-hidden="true">
     <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <polygon points="0,80 1440,14 1440,80" fill="#fafcff"/>
+      <polygon points="0,80 1440,14 1440,80" fill="#091828"/>
     </svg>
   </div>
 
@@ -46,16 +52,23 @@
       <span class="hero__line">My Gear</span>
       <span class="hero__line hero__accent">Worth?</span>
     </h1>
-    <p class="hero__sub">Enter your ski or snowboard gear. Get a realistic resale range in seconds.</p>
+    <p class="hero__sub">Enter your skis or snowboard. Get a realistic resale range built from real eBay sold prices, not what sellers hoped to get.</p>
     <div class="hero__meta">
       <span class="hero__meta-rule" aria-hidden="true"></span>
-      <p class="hero__meta-text">Free at launch &middot; no account required</p>
+      <p class="hero__meta-text">Free at launch &middot; no account needed</p>
     </div>
     <a class="hero__cta" href="#join">Get first access <span aria-hidden="true">→</span></a>
   </div>
 
+  <a class="hero__scroll" href="#join" aria-label="Scroll to waitlist">
+    <svg viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M2 2 L12 13 L22 2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </a>
+
   <div class="hero__visual" aria-hidden="true">
     <div class="val-panel">
+      <span class="val-panel__tag">Preview</span>
 
       <div class="val-s val-s--gear">
         <p class="val-s__eyebrow">What's your gear?</p>
@@ -93,14 +106,14 @@
           <div class="val-s__progress-fill"></div>
         </div>
         <div class="val-s__scan-labels">
-          <p class="val-s__scan-label val-s__scan-label--1">Searching 14,000+ listings&hellip;</p>
-          <p class="val-s__scan-label val-s__scan-label--2">Found 140 comparable sales</p>
-          <p class="val-s__scan-label val-s__scan-label--3">Calculating your range&hellip;</p>
+          <p class="val-s__scan-label val-s__scan-label--1">Searching eBay AU sold prices&hellip;</p>
+          <p class="val-s__scan-label val-s__scan-label--2">Filtering by year, length, condition&hellip;</p>
+          <p class="val-s__scan-label val-s__scan-label--3">Found 47 matching recent sales</p>
         </div>
       </div>
 
       <div class="val-s val-s--value">
-        <p class="val-s__eyebrow">Salomon QST 92 &middot; est. resale</p>
+        <p class="val-s__eyebrow">Salomon QST 92 &middot; 2021 &middot; est. resale</p>
         <p class="val-s__price">$420</p>
         <div class="val-s__rule"><span class="val-s__rule-fill"></span></div>
         <div class="val-s__range">
@@ -111,7 +124,7 @@
           </div>
           <span class="val-s__range-hi">$560</span>
         </div>
-        <p class="val-s__comps">140 comparable sales &middot; updated weekly</p>
+        <p class="val-s__comps">47 AU sold prices &middot; last 90 days</p>
       </div>
 
     </div>
@@ -123,32 +136,63 @@
   <section class="form-section" id="join" aria-label="Join the waitlist">
     <div class="form-section__inner">
       <div class="form-section__copy" data-reveal>
-        <h2 class="form-section__heading">Get first<br>access.</h2>
-        <p class="form-section__sub">One email when GearWorth launches. No newsletter, no promotions.</p>
+        <h2 class="form-section__heading">Know before<br>you sell.</h2>
+        <p class="form-section__sub">Be first to know what your gear is actually worth. Founding members get early access before GearWorth opens to the public.</p>
         <p class="form-section__proof">
           <span class="form-section__proof-dot" aria-hidden="true"></span>
-          200+ people already on the list
+          Early access list is open
         </p>
       </div>
       <div class="form-card" data-reveal data-delay="80">
         <div id="waitlist-app"></div>
       </div>
+      <p class="form-section__founder" data-reveal data-delay="160">
+        Built in Adelaide by Will, a skier who got tired of guessing what a season's setup was worth.
+      </p>
     </div>
   </section>
 
   <section class="pillars" aria-label="What GearWorth does">
     <div class="pillars__inner">
       <div class="pillar" data-reveal>
-        <h3 class="pillar__head">Instant estimates</h3>
-        <p class="pillar__body">Enter brand, model, year, and condition. A dollar range lands in seconds.</p>
+        <h3 class="pillar__head">Sold prices, not asking</h3>
+        <p class="pillar__body">Every estimate is built from actual eBay sold data: what gear changed hands for, not what sellers hoped to get.</p>
       </div>
       <div class="pillar" data-reveal data-delay="80">
-        <h3 class="pillar__head">Real market data</h3>
-        <p class="pillar__body">Prices built from thousands of real transactions, refreshed weekly.</p>
+        <h3 class="pillar__head">Six factors, not two</h3>
+        <p class="pillar__body">Year, length, condition, bindings, category, region. The variables that actually move ski gear prices, not just brand and model.</p>
       </div>
       <div class="pillar" data-reveal data-delay="160">
         <h3 class="pillar__head">Buy &amp; sell</h3>
-        <p class="pillar__body">Post gear directly to skiers who know what it is and what it's worth.</p>
+        <p class="pillar__body">List directly to buyers who already know what your gear is. No explaining what a QST 92 is.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="shops" id="shops" aria-label="For ski shops">
+    <div class="shops__inner">
+      <div class="shops__copy" data-reveal>
+        <span class="shops__tag">For ski shops</span>
+        <h2 class="shops__heading">Price every trade-in with confidence.</h2>
+        <p class="shops__sub">Value used and trade-in stock on the same real sold data, in bulk. Quote fair trade-ins on the spot, and catch overpriced inventory before it sits all season.</p>
+        <ul class="shops__points">
+          <li class="shops__point">
+            <span class="shops__point-head">Bulk valuations</span>
+            <span class="shops__point-body">Price a full rack of trade-ins at once, not one item at a time.</span>
+          </li>
+          <li class="shops__point">
+            <span class="shops__point-head">Fair trade-in quotes</span>
+            <span class="shops__point-body">Back every offer with what the gear actually sells for, so your margins hold.</span>
+          </li>
+          <li class="shops__point">
+            <span class="shops__point-head">Less dead stock</span>
+            <span class="shops__point-body">Spot overpriced inventory early and move it before the season ends.</span>
+          </li>
+        </ul>
+      </div>
+      <div class="shops__card" data-reveal data-delay="80">
+        <p class="shops__card-title">Get shop access early</p>
+        <div id="shop-app"></div>
       </div>
     </div>
   </section>
@@ -163,5 +207,6 @@
 <script src="/js/components/WaitlistForm.js"></script>
 <script>
   Vue.createApp(WaitlistForm).mount('#waitlist-app');
+  Vue.createApp(WaitlistForm, { audience: 'shop' }).mount('#shop-app');
 </script>
 <script src="/js/main.js" defer></script>

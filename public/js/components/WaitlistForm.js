@@ -1,15 +1,34 @@
 const WaitlistForm = {
+  props: {
+    // 'consumer' (default) or 'shop' — drives copy, fields, and signup type.
+    audience: { type: String, default: 'consumer' },
+  },
   data() {
     return {
       email: '',
-      name: '',
+      shopName: '',
       error: '',
       submitted: false,
       submitting: false,
     };
   },
+  computed: {
+    isShop() { return this.audience === 'shop'; },
+    emailId() { return this.isShop ? 'shop-email' : 'wl-email'; },
+    emailLabel() { return this.isShop ? 'Work email' : 'Your email'; },
+    buttonLabel() {
+      if (this.submitting) return this.isShop ? 'Sending…' : 'Claiming your spot…';
+      return this.isShop ? 'Request shop access →' : 'Claim early access →';
+    },
+    noteText() {
+      return this.isShop
+        ? "We'll reach out to set your shop up before launch. No commitment."
+        : 'Free to join · one email at launch · unsubscribe anytime';
+    },
+  },
   methods: {
     validate() {
+      if (this.isShop && !this.shopName.trim()) return 'Shop name is required.';
       if (!this.email.trim()) return 'Email is required.';
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email.trim())) {
         return 'Please enter a valid email address.';
@@ -24,7 +43,11 @@ const WaitlistForm = {
         const res = await fetch('/waitlist', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: this.email.trim(), name: this.name.trim() }),
+          body: JSON.stringify({
+            email: this.email.trim(),
+            type: this.audience,
+            shopName: this.shopName.trim(),
+          }),
         });
         const data = await res.json();
         if (data.ok) {
@@ -47,13 +70,26 @@ const WaitlistForm = {
         </svg>
       </div>
       <p class="form-success__title">You're in.</p>
-      <p class="form-success__body">First email, first access. We'll reach you at <strong>{{ email }}</strong> when GearWorth launches.</p>
+      <p v-if="isShop" class="form-success__body">We'll reach out to <strong>{{ email }}</strong> to get <strong>{{ shopName }}</strong> set up before GearWorth launches.</p>
+      <p v-else class="form-success__body">First email, first access. We'll reach you at <strong>{{ email }}</strong> when GearWorth launches.</p>
     </div>
     <form v-else class="form" @submit.prevent="submit" novalidate>
-      <div class="form__field">
-        <label class="form__label" for="wl-email">Email <span class="form__required">*</span></label>
+      <div v-if="isShop" class="form__field">
+        <label class="form__label" for="shop-name">Shop name</label>
         <input
-          id="wl-email"
+          id="shop-name"
+          class="form__input"
+          type="text"
+          v-model="shopName"
+          placeholder="Powder House Skis"
+          autocomplete="organization"
+          :disabled="submitting"
+        />
+      </div>
+      <div class="form__field">
+        <label class="form__label" :for="emailId">{{ emailLabel }}</label>
+        <input
+          :id="emailId"
           class="form__input"
           :class="{ 'form__input--error': error }"
           type="email"
@@ -63,23 +99,12 @@ const WaitlistForm = {
           :disabled="submitting"
         />
       </div>
-      <div class="form__field">
-        <label class="form__label" for="wl-name">Name <span class="form__optional">(optional)</span></label>
-        <input
-          id="wl-name"
-          class="form__input"
-          type="text"
-          v-model="name"
-          placeholder="Your name"
-          autocomplete="name"
-          :disabled="submitting"
-        />
-      </div>
       <p v-if="error" class="form__error" role="alert">{{ error }}</p>
       <button class="form__submit" type="submit" :disabled="submitting">
         <span v-if="submitting" class="form__spinner"></span>
-        <span>{{ submitting ? 'Joining…' : 'Get first access →' }}</span>
+        <span>{{ buttonLabel }}</span>
       </button>
+      <p class="form__note">{{ noteText }}</p>
     </form>
   `,
 };
