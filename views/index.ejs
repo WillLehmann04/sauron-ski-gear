@@ -12,7 +12,7 @@
       <span class="nav__link" title="Coming soon">Buy</span>
       <span class="nav__link" title="Coming soon">Sell</span>
     </div>
-    <a class="nav__cta" href="#join">Join the list</a>
+    <a class="nav__cta" href="#join">Get early access</a>
   </div>
 </nav>
 
@@ -144,7 +144,7 @@
         </p>
       </div>
       <div class="form-card" data-reveal data-delay="80">
-        <div id="waitlist-app"></div>
+        <div id="waitlist-app"><noscript><p class="form-noscript">Please enable JavaScript to join the waitlist.</p></noscript></div>
       </div>
       <p class="form-section__founder" data-reveal data-delay="160">
         Built in Adelaide by Will, a skier who got tired of guessing what a season's setup was worth.
@@ -156,11 +156,11 @@
     <div class="pillars__inner">
       <div class="pillar" data-reveal>
         <h3 class="pillar__head">Sold prices, not asking</h3>
-        <p class="pillar__body">Every estimate is built from actual eBay sold data: what gear changed hands for, not what sellers hoped to get.</p>
+        <p class="pillar__body">Every estimate is built from completed eBay sales: the prices buyers actually paid, refreshed every week.</p>
       </div>
       <div class="pillar" data-reveal data-delay="80">
-        <h3 class="pillar__head">Six factors, not two</h3>
-        <p class="pillar__body">Year, length, condition, bindings, category, region. The variables that actually move ski gear prices, not just brand and model.</p>
+        <h3 class="pillar__head">Six factors priced in</h3>
+        <p class="pillar__body">Year, length, condition, bindings, category, and region. The variables that actually move ski gear prices, weighted on real data.</p>
       </div>
       <div class="pillar" data-reveal data-delay="160">
         <h3 class="pillar__head">Buy &amp; sell</h3>
@@ -192,7 +192,7 @@
       </div>
       <div class="shops__card" data-reveal data-delay="80">
         <p class="shops__card-title">Get shop access early</p>
-        <div id="shop-app"></div>
+        <div id="shop-app"><noscript><p class="form-noscript">Please enable JavaScript to request shop access.</p></noscript></div>
       </div>
     </div>
   </section>
@@ -200,13 +200,22 @@
 </main>
 
 <footer class="footer">
-  <span class="footer__logo">GearWorth</span>
+  <span class="footer__logo">
+    <svg class="footer__logo-icon" viewBox="0 0 20 15" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <path d="M1 14 L8 2 L15 14" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M10 14 L16 5 L19 14" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" opacity="0.40"/>
+    </svg>
+    GearWorth
+  </span>
   <span class="footer__copy">&copy; 2026</span>
 </footer>
 
-<script src="/js/components/WaitlistForm.js"></script>
+<script defer src="/js/components/WaitlistForm.js"></script>
 <script>
-  Vue.createApp(WaitlistForm).mount('#waitlist-app');
-  Vue.createApp(WaitlistForm, { audience: 'shop' }).mount('#shop-app');
+  // Vue and WaitlistForm load deferred; DOMContentLoaded fires after both run.
+  document.addEventListener('DOMContentLoaded', () => {
+    Vue.createApp(WaitlistForm).mount('#waitlist-app');
+    Vue.createApp(WaitlistForm, { audience: 'shop' }).mount('#shop-app');
+  });
 </script>
 <script src="/js/main.js" defer></script>

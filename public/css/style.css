@@ -8,6 +8,52 @@
 a, button { touch-action: manipulation; }
 canvas    { touch-action: pan-y; }
 
+/* ── Keyboard focus (a11y) ─────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--orange-cta);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+.form__submit:focus-visible { outline-color: #fff; } /* orange button needs a light ring */
+
+/* Skip link — visible only when focused via keyboard */
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 200;
+  background: #fff;
+  color: var(--navy);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  transition: top 0.2s ease;
+}
+.skip-link:focus { top: 12px; }
+
+/* Honeypot — off-screen for humans, present in the DOM for bots.
+   Not display:none, so bots that skip hidden fields still fill it. */
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* No-JS fallback shown inside the form containers before Vue mounts */
+.form-noscript {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--blue-secondary);
+  text-align: center;
+}
+
 :root {
   /* Alpine Editorial palette */
   --ice-sky:        #b8d6ec;
@@ -24,6 +70,18 @@ canvas    { touch-action: pan-y; }
   --border:         #cddae6;
   --border-focus:   #3a7aaa;
   --shadow:         rgba(28, 60, 90, 1);
+
+  /* Dark-ink depth scale — one blue-black family, deliberate steps.
+     Used across every dark zone so the page reads as one surface. */
+  --ink-900:        #060d16;  /* hero — deepest, immersive */
+  --ink-850:        #091828;  /* CTA action zone, hero slope, footer */
+  --ink-700:        #0d3152;  /* shops B2B band — lighter, same hue */
+
+  /* Shared elevation for white cards floating on dark ink. */
+  --card-shadow:
+    0 0 0 1px   rgba(255, 255, 255, 0.06),
+    0 20px 60px rgba(0, 0, 0, 0.45),
+    0 0 80px    rgba(58, 122, 170, 0.07);
   --error:          #dc2626;
   --error-bg:       #fef2f2;
   --success:        #16a34a;
@@ -395,7 +453,7 @@ body {
 /* ── Hero ──────────────────────────────────────── */
 .hero {
   position: relative;
-  background-color: #060d16;
+  background-color: var(--ink-900);
   background-image:
     radial-gradient(ellipse 115% 58% at 50% -8%, rgba(11, 50, 86, 0.96) 0%, transparent 62%),
     radial-gradient(ellipse 55% 38% at 90% 10%, rgba(7, 32, 60, 0.72) 0%, transparent 52%),
@@ -1173,7 +1231,7 @@ body {
 .hero__meta-text {
   font-size: 12px;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.62);
   letter-spacing: 0.03em;
 }
 
@@ -1222,8 +1280,8 @@ body {
 /* ── Form section ──────────────────────────────── */
 .form-section {
   scroll-margin-top: 72px;
-  background: #091828;
-  padding: 80px max(20px, 5vw) 96px;
+  background: var(--ink-850);
+  padding: 88px max(20px, 5vw) 96px;
 }
 
 .form-section__inner {
@@ -1297,12 +1355,13 @@ body {
 .form-card {
   background: #ffffff;
   border-radius: 14px;
-  box-shadow:
-    0 0 0 1px   rgba(255, 255, 255, 0.06),
-    0 20px 60px rgba(0, 0, 0, 0.45),
-    0 0 80px    rgba(58, 122, 170, 0.07);
+  box-shadow: var(--card-shadow);
   padding: 32px;
 }
+
+/* Reserve form height so the card doesn't jump when Vue hydrates (CLS). */
+#waitlist-app { min-height: 156px; }
+#shop-app     { min-height: 230px; }
 
 /* ── Form elements ─────────────────────────────── */
 .form { display: flex; flex-direction: column; gap: 12px; }
@@ -1504,7 +1563,7 @@ body {
 .shops {
   background:
     radial-gradient(ellipse 70% 60% at 100% 0%, rgba(58, 122, 170, 0.30) 0%, transparent 62%),
-    #0c3a5c;
+    var(--ink-700);
   padding: 88px max(20px, 5vw) 96px;
 }
 
@@ -1595,10 +1654,8 @@ body {
 .shops__card {
   background: #ffffff;
   border-radius: 14px;
-  padding: 28px;
-  box-shadow:
-    0 0 0 1px   rgba(255, 255, 255, 0.06),
-    0 20px 60px rgba(0, 0, 0, 0.42);
+  padding: 32px;
+  box-shadow: var(--card-shadow);
 }
 
 .shops__card-title {
@@ -1613,8 +1670,8 @@ body {
 
 /* ── Footer ────────────────────────────────────── */
 .footer {
-  background: var(--navy);
-  padding: 20px max(20px, 5vw);
+  background: var(--ink-850);
+  padding: 24px max(20px, 5vw);
   padding-bottom: max(20px, env(safe-area-inset-bottom, 0px));
   padding-left:   max(20px, 5vw, env(safe-area-inset-left,  0px));
   padding-right:  max(20px, 5vw, env(safe-area-inset-right, 0px));
@@ -1624,12 +1681,22 @@ body {
 }
 
 .footer__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 14px;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.70);
+}
+
+.footer__logo-icon {
+  width: 15px;
+  height: 11px;
+  flex-shrink: 0;
+  opacity: 0.85;
 }
 
 .footer__copy {
@@ -1669,6 +1736,7 @@ body {
   .hero__title { font-size: clamp(60px, 16vw, 88px); }
   .hero__meta { margin-top: 24px; }
   .hero__visual { justify-content: center; }
+  .hero__scroll { display: none; }
   .val-panel { max-width: 380px; height: 275px; }
   .val-s__price { font-size: 76px; }
 

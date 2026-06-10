@@ -7,6 +7,7 @@ const WaitlistForm = {
     return {
       email: '',
       shopName: '',
+      hp: '', // honeypot — must stay empty for real users
       error: '',
       submitted: false,
       submitting: false,
@@ -47,6 +48,7 @@ const WaitlistForm = {
             email: this.email.trim(),
             type: this.audience,
             shopName: this.shopName.trim(),
+            hp: this.hp,
           }),
         });
         const data = await res.json();
@@ -98,6 +100,9 @@ const WaitlistForm = {
           autocomplete="email"
           :disabled="submitting"
         />
+      </div>
+      <div class="hp-field" aria-hidden="true">
+        <label>Website<input type="text" v-model="hp" tabindex="-1" autocomplete="off"/></label>
       </div>
       <p v-if="error" class="form__error" role="alert">{{ error }}</p>
       <button class="form__submit" type="submit" :disabled="submitting">

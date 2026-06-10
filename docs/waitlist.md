@@ -40,6 +40,7 @@ The two audiences are stored in **separate collections** so demand can be measur
 - `type` — `"consumer"` (default) or `"shop"`. Routes the signup to the matching collection.
 - `name` — optional (consumer).
 - `shopName` — required when `type` is `"shop"`, ignored otherwise.
+- `hp` — honeypot. A hidden field humans never fill. If non-empty, the request is treated as a bot: the API returns `{ ok: true }` but **nothing is stored**, keeping demand data clean.
 
 **Success — 201 Created:**
 ```json

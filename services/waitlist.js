@@ -9,7 +9,11 @@ const COLLECTIONS = {
   shop: 'shops',
 };
 
-function signup({ email, name, type, shopName } = {}) {
+function signup({ email, name, type, shopName, hp } = {}) {
+  // Honeypot: humans never see this field, bots fill it. Silently accept
+  // (so the bot thinks it worked) without storing, keeping demand data clean.
+  if (hp && hp.trim()) return { ok: true };
+
   const audience = type === 'shop' ? 'shop' : 'consumer';
   const collection = COLLECTIONS[audience];
   const normalizedEmail = (email || '').toLowerCase().trim();
