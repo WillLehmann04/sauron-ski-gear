@@ -1,4 +1,12 @@
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a, button { touch-action: manipulation; }
+canvas    { touch-action: pan-y; }
 
 :root {
   /* Alpine Editorial palette */
@@ -22,7 +30,10 @@
   --radius:         10px;
 }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
 
 body {
   font-family: 'DM Sans', system-ui, sans-serif;
@@ -30,6 +41,7 @@ body {
   background: var(--fresh-snow);
   color: var(--navy);
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
@@ -49,6 +61,8 @@ body {
   display: flex;
   align-items: center;
   padding: 0 max(20px, 5vw);
+  padding-left:  max(20px, 5vw, env(safe-area-inset-left,  0px));
+  padding-right: max(20px, 5vw, env(safe-area-inset-right, 0px));
   transition:
     background      0.45s cubic-bezier(0.4, 0, 0.2, 1),
     border-color    0.45s cubic-bezier(0.4, 0, 0.2, 1),
@@ -1239,6 +1253,7 @@ body {
   color: var(--navy);
   background: #fafcff;
   outline: none;
+  -webkit-appearance: none;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
@@ -1363,6 +1378,9 @@ body {
 .footer {
   background: var(--navy);
   padding: 20px max(20px, 5vw);
+  padding-bottom: max(20px, env(safe-area-inset-bottom, 0px));
+  padding-left:   max(20px, 5vw, env(safe-area-inset-left,  0px));
+  padding-right:  max(20px, 5vw, env(safe-area-inset-right, 0px));
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1432,7 +1450,10 @@ body {
 
   .nav__links { display: none; }
   .nav__inner { gap: 12px; }
-  .nav__cta { font-size: 10px; padding: 5px 13px; }
+  .nav__cta { font-size: 11px; padding: 10px 16px; }
+
+  /* Prevent iOS auto-zoom on input focus (font-size < 16px triggers zoom) */
+  .form__input { font-size: 16px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
