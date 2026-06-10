@@ -468,6 +468,16 @@ body {
   column-gap: max(36px, 4vw);
 }
 
+/* Cap and centre the hero content on wide monitors so the title and panel
+   don't drift to opposite edges. Background layers stay full-bleed. */
+@media (min-width: 1600px) {
+  .hero {
+    grid-template-columns: minmax(0, 620px) minmax(0, 540px);
+    justify-content: center;
+    column-gap: 96px;
+  }
+}
+
 .hero__snow {
   position: absolute;
   inset: 0;
