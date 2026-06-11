@@ -12,7 +12,7 @@ Secondary: buyers hunting value in the secondhand market. Present at launch but 
 
 ## Product Purpose
 
-GearWorth gives skiers and snowboarders an instant, realistic resale estimate for their used gear. No guesswork, no trawling eBay for comps, no awkward DMs asking "is this fair?" — just enter the gear and get a range grounded in real market data. A waitlist captures the early audience before the full marketplace (buy/sell) launches.
+PowVal gives skiers and snowboarders an instant, realistic resale estimate for their used gear. No guesswork, no trawling eBay for comps, no awkward DMs asking "is this fair?" — just enter the gear and get a range grounded in real market data. A waitlist captures the early audience before the full marketplace (buy/sell) launches.
 
 Success at this stage: credibility. If a skier lands on the page and thinks "yeah, these people know gear prices," the waitlist conversion follows.
 

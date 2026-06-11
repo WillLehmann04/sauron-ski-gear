@@ -72,8 +72,8 @@ const WaitlistForm = {
         </svg>
       </div>
       <p class="form-success__title">You're in.</p>
-      <p v-if="isShop" class="form-success__body">We'll reach out to <strong>{{ email }}</strong> to get <strong>{{ shopName }}</strong> set up before GearWorth launches.</p>
-      <p v-else class="form-success__body">First email, first access. We'll reach you at <strong>{{ email }}</strong> when GearWorth launches.</p>
+      <p v-if="isShop" class="form-success__body">We'll reach out to <strong>{{ email }}</strong> to get <strong>{{ shopName }}</strong> set up before PowVal launches.</p>
+      <p v-else class="form-success__body">First email, first access. We'll reach you at <strong>{{ email }}</strong> when PowVal launches.</p>
     </div>
     <form v-else class="form" @submit.prevent="submit" novalidate>
       <div v-if="isShop" class="form__field">

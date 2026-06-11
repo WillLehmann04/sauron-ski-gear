@@ -1,5 +1,5 @@
 ---
-name: GearWorth
+name: PowVal
 description: Instant resale estimates for ski and snowboard gear
 colors:
   deep-sky: "#0d4f7c"
@@ -77,7 +77,7 @@ components:
     padding: "28px 32px"
 ---
 
-# Design System: GearWorth
+# Design System: PowVal
 
 ## 1. Overview
 

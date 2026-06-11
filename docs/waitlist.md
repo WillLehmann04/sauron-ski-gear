@@ -1,6 +1,6 @@
 # Waitlist Feature
 
-Captures signups from two distinct audiences who want GearWorth when it launches:
+Captures signups from two distinct audiences who want PowVal when it launches:
 
 - **Consumers** — skiers who want to buy or sell their own gear (hero + main form).
 - **Ski shops** — retailers who want bulk trade-in/inventory pricing ("For ski shops" band).

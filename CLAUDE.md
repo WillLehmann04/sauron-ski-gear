@@ -12,7 +12,7 @@
 
 ## Project overview
 
-**What's My Gear Worth?** is a web tool that estimates the resale value of used ski and snowboard gear. Users enter their gear details and get an instant estimate. A waitlist captures people who want to buy or sell gear through the platform when it launches.
+**PowVal** (powval.com) is a web tool that estimates the resale value of used ski and snowboard gear. "What's My Gear Worth?" is its tagline. Users enter their gear details and get an instant estimate. A waitlist captures people who want to buy or sell gear through the platform when it launches.
 
 ---
 
