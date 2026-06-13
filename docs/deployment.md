@@ -110,7 +110,7 @@ To pause auto-deploys at any time, set `DEPLOY_ENABLED` to anything other than `
 ### 5. Done-check
 
 - `https://powval.com` renders the landing page with a padlock.
-- A test signup appears in the DB: `ssh powval@<ip> "sqlite3 ~/app/data/powval.db 'SELECT * FROM waitlist'"`.
+- A test signup appears in the DB: `ssh powval@<ip> "sqlite3 /home/powval/app/data/powval.db 'SELECT * FROM waitlist'"`.
 - `systemctl status powval` shows active; reboot the droplet once and confirm the site
   comes back by itself.
 - Auto-deploy works end to end: push any small commit to `main` (or re-run the latest
@@ -133,7 +133,7 @@ VPS exists don't produce failed runs. Deploy status appears next to each commit 
 ### Manual (always available)
 
 ```bash
-ssh powval@<droplet-ip> '~/app/deploy/deploy.sh'
+ssh powval@<droplet-ip> '/home/powval/app/deploy/deploy.sh'
 ```
 
 Pulls, installs production deps, restarts the service, and health-checks. Rollback is
@@ -156,14 +156,79 @@ TRUST_PROXY_HOPS=2   # Cloudflare -> Caddy -> app; rate limiter needs real clien
 | App logs | `journalctl -u powval -n 100 -f` |
 | Restart app | `sudo systemctl restart powval` |
 | Caddy logs | `journalctl -u caddy -n 50` |
-| Inspect signups | `sqlite3 ~/app/data/powval.db 'SELECT COUNT(*) FROM waitlist'` |
-| Backups | `ls ~/backups/` (nightly 3:15am, 14 kept, log in `~/backups/backup.log`) |
+| Inspect signups | `sqlite3 /home/powval/app/data/powval.db 'SELECT COUNT(*) FROM waitlist'` |
+| Backups | `ls /home/powval/backups/` (nightly 3:15am, 14 kept, log in `/home/powval/backups/backup.log`) |
+| Run a backup now | `sudo -u powval /home/powval/app/deploy/backup-db.sh` |
 | Restore a backup | `gunzip -k powval-<date>.db.gz` → stop app → replace `data/powval.db` → start |
 
 Test the restore path once after first deploy, not during an incident.
 
+### Daily backup email reports (Resend)
+
+`backup-db.sh` sends a daily email (`PowVal backup OK: <date>` on success,
+`PowVal backup FAILED: <date>` with the error output on failure) to
+`will.lehmann@powval.com`. It sends via [Resend](https://resend.com) (a transactional
+email API), because a VPS can't reliably send mail itself (DigitalOcean blocks outbound
+port 25; plain server mail lands in spam).
+
+Receiving is already handled (the inbox is hosted externally, IMAP → Outlook), so this
+is just the **sending** half — Resend.
+
+> ⚠️ Do **not** enable Cloudflare Email Routing for `powval.com`. The inbox is hosted
+> elsewhere; Email Routing would add Cloudflare's own MX records, conflict with that host,
+> and break inbound mail. Leave the existing **MX** records alone. (They were imported when
+> you moved nameservers to Cloudflare; since mail is flowing, they're fine.)
+
+**Send via Resend**
+
+1. Create a free [Resend](https://resend.com) account.
+2. **Add Domain → `powval.com`** → Resend shows DNS records (DKIM, SPF, return-path),
+   scoped to a `send.powval.com` subdomain so they sit *alongside* your existing email
+   host's records. Add **exactly what Resend lists** in Cloudflare → DNS as **DNS only
+   (grey cloud)** — do not modify or remove your current MX / SPF records — then click
+   Verify in Resend.
+   (To test before verifying: Resend lets you send from `onboarding@resend.dev` to your
+   own account email — set `BACKUP_EMAIL_FROM=onboarding@resend.dev` temporarily.)
+3. **API Keys → Create** → copy the `re_...` key.
+
+**C. Configure the server**
+
+Add to `/home/powval/app/.env` (mode 600, not in git):
+
+```bash
+sudo -u powval tee -a /home/powval/app/.env >/dev/null <<'ENV'
+RESEND_API_KEY=re_your_key_here
+BACKUP_EMAIL_TO=will.lehmann@powval.com
+BACKUP_EMAIL_FROM=PowVal Backups <backups@powval.com>
+ENV
+```
+
+No restart needed — the cron script reads `.env` each run.
+
+**D. Test it end to end**
+
+```bash
+sudo -u powval /home/powval/app/deploy/backup-db.sh
+```
+
+You should get the `PowVal backup OK` email within a minute. To check the FAILED path,
+temporarily point `BACKUP_EMAIL_FROM` at an unverified domain or break the DB path — you'll
+get the `PowVal backup FAILED` email and a non-zero exit.
+
+If `RESEND_API_KEY` is left blank, the script skips email silently and backups still run.
+
+**Optional backstop — dead-man's-switch.** Email can't tell you if the *whole box or cron
+died* (then no email arrives at all, and absence is easy to miss). To cover that, add a
+free [healthchecks.io](https://healthchecks.io) check (period 1 day, grace 1 hour) and put
+its ping URL in `.env` as `HEALTHCHECK_URL=https://hc-ping.com/<uuid>`. The script pings it
+on success and `/fail` on failure; a missed run trips the check and emails you.
+
 ## Known gaps (deliberate, revisit at launch)
 
 - No uptime monitoring yet — add a free pinger (UptimeRobot) on `https://powval.com` once live.
-- Backups stay on the same disk — add a weekly offsite copy (object storage) before the estimator's comps data becomes valuable.
+- Backups are **local-only** (same disk as the DB). A failed/missed backup now alerts
+  via the healthchecks.io dead-man's-switch above, but a destroyed droplet still loses
+  the backups. Add an offsite copy (Cloudflare R2 / Backblaze B2 via `rclone`) before
+  the estimator's comps data becomes valuable — the script is structured so the upload
+  is a few extra lines.
 - The weekly comps-refresh cron lands here when the estimator ships (see `ml/task_outline.md` §10).

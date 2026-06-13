@@ -17,7 +17,7 @@ echo "== PowVal VPS setup: user=${APP_USER} dir=${APP_DIR} domain=${DOMAIN}"
 
 # ── System packages ──────────────────────────────────────────────
 apt-get update -qq
-apt-get install -y -qq curl git ufw sqlite3 debian-keyring debian-archive-keyring apt-transport-https
+apt-get install -y -qq curl git ufw sqlite3 jq debian-keyring debian-archive-keyring apt-transport-https
 
 # ── Firewall: SSH + HTTP(S) only ─────────────────────────────────
 ufw allow OpenSSH >/dev/null
@@ -88,6 +88,13 @@ if [[ ! -f "${APP_DIR}/.env" ]]; then
   cat > "${APP_DIR}/.env" <<ENV
 PORT=3000
 TRUST_PROXY_HOPS=2
+# Daily backup email reports via Resend (see docs/deployment.md). Fill these in
+# to enable; leave blank to skip email (backups still run).
+# RESEND_API_KEY=
+# BACKUP_EMAIL_TO=will.lehmann@powval.com
+# BACKUP_EMAIL_FROM=PowVal Backups <backups@powval.com>
+# Optional dead-man's-switch backstop:
+# HEALTHCHECK_URL=https://hc-ping.com/your-uuid-here
 ENV
   chown "${APP_USER}:${APP_USER}" "${APP_DIR}/.env"
   chmod 600 "${APP_DIR}/.env"

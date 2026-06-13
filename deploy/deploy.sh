@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Deploy the latest main to this VPS. Run as the powval user (or root):
-#   ssh powval@<vps> '~/app/deploy/deploy.sh'
+#   ssh powval@<vps> '/home/powval/app/deploy/deploy.sh'
 set -euo pipefail
 
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
