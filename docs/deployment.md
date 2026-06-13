@@ -26,6 +26,19 @@ Everything scriptable lives in `deploy/`:
 
 ## First-time setup (runbook)
 
+Every manual action, in order. Steps 1–5 are one-time; after that, deploys are
+automatic on every push to `main`.
+
+**Your actions at a glance:**
+
+| # | Where | What you do |
+|---|---|---|
+| 1 | DigitalOcean | Create the Sydney droplet, note the IP |
+| 2 | SSH (root) | Run `setup-vps.sh`; paste the **deploy key** it prints into GitHub; copy the **CI key** it prints at the end |
+| 3 | GitHub | Add 2 Actions secrets + 1 variable (enables auto-deploy) |
+| 4 | Cloudflare + registrar | Add domain, swap nameservers, DNS records grey→orange, SSL Full (strict) |
+| 5 | Browser/SSH | Done-checks |
+
 ### 1. Create the VPS (manual, ~5 min)
 
 1. DigitalOcean → Create Droplet → Region **Sydney (SYD1)** → Ubuntu 24.04 LTS →
@@ -44,10 +57,14 @@ bash setup-vps.sh
 `scp deploy/setup-vps.sh root@<droplet-ip>:` from your machine, then `bash setup-vps.sh`.)
 
 The script installs Node 22, Caddy, firewall (22/80/443 only), creates the `powval`
-user, prints a **deploy key** to add at GitHub → repo → Settings → Deploy keys
-(read-only), clones the repo, installs the systemd service, configures Caddy for
-`powval.com`, and schedules nightly DB backups. It pauses once, waiting for the deploy
-key to be added.
+user, installs the systemd service, configures Caddy for `powval.com`, and schedules
+nightly DB backups. It needs you twice:
+
+1. **Mid-run it prints a deploy key** and pauses. Add it at GitHub → repo →
+   Settings → **Deploy keys** → "Add deploy key" → paste → leave *write access*
+   unchecked → add. Press Enter on the server to continue.
+2. **At the end it prints a CI private key** (a `BEGIN OPENSSH PRIVATE KEY` block)
+   plus instructions. Copy the whole block — you paste it into GitHub in step 3.
 
 Sanity check when it finishes:
 
@@ -55,7 +72,21 @@ Sanity check when it finishes:
 curl -s http://127.0.0.1:3000/ | head -c 100   # HTML from the app
 ```
 
-### 3. Cloudflare (manual, ~10 min)
+### 3. Enable auto-deploy (GitHub, ~2 min)
+
+GitHub repo → **Settings → Secrets and variables → Actions**:
+
+1. Tab **Secrets** → "New repository secret":
+   - Name `VPS_HOST`, value = the droplet IP.
+   - Name `VPS_SSH_KEY`, value = the CI private key block from step 2 (entire thing,
+     including the `BEGIN`/`END` lines).
+2. Tab **Variables** → "New repository variable":
+   - Name `DEPLOY_ENABLED`, value `true`.
+
+From this moment every push to `main` deploys itself (watch the **Actions** tab).
+To pause auto-deploys at any time, set `DEPLOY_ENABLED` to anything other than `true`.
+
+### 4. Cloudflare (manual, ~10 min)
 
 1. **Add the site**: Cloudflare dashboard → Add a domain → `powval.com` → Free plan.
 2. **Nameservers**: at the domain registrar, replace the nameservers with the two
@@ -76,12 +107,14 @@ curl -s http://127.0.0.1:3000/ | head -c 100   # HTML from the app
 > directly. Flipping to orange first can leave the origin certificate-less and the
 > site erroring behind the proxy.
 
-### 4. Done-check
+### 5. Done-check
 
 - `https://powval.com` renders the landing page with a padlock.
 - A test signup appears in the DB: `ssh powval@<ip> "sqlite3 ~/app/data/powval.db 'SELECT * FROM waitlist'"`.
 - `systemctl status powval` shows active; reboot the droplet once and confirm the site
   comes back by itself.
+- Auto-deploy works end to end: push any small commit to `main` (or re-run the latest
+  workflow from the Actions tab) and confirm the run goes green and the change is live.
 
 ---
 
@@ -93,14 +126,9 @@ curl -s http://127.0.0.1:3000/ | head -c 100   # HTML from the app
 with a dedicated CI key and runs `deploy.sh`. The key is command-restricted in
 `authorized_keys` — it can only trigger the deploy script, never open a shell.
 
-One-time enablement after `setup-vps.sh` (which prints the key and these steps):
-
-1. GitHub repo → Settings → Secrets and variables → Actions → **secrets**
-   `VPS_HOST` (the droplet IP) and `VPS_SSH_KEY` (the printed private key).
-2. Same page → **Variables** → `DEPLOY_ENABLED` = `true`.
-
-Until `DEPLOY_ENABLED` is set, the workflow skips silently, so pushes before the VPS
-exists don't produce failed runs. Deploy status appears next to each commit on GitHub.
+One-time enablement is **step 3 of the runbook above** (two secrets + one variable).
+Until `DEPLOY_ENABLED=true` is set, the workflow skips silently, so pushes before the
+VPS exists don't produce failed runs. Deploy status appears next to each commit on GitHub.
 
 ### Manual (always available)
 
