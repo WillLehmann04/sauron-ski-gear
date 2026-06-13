@@ -151,6 +151,10 @@ TRUST_PROXY_HOPS=2   # Cloudflare -> Caddy -> app; rate limiter needs real clien
 
 ## Operations
 
+> Commands below use `sudo -u powval` assuming you're logged in as an admin user
+> (`root`/`ubuntu`). If you're logged in as `powval` itself, **drop the `sudo -u powval`** —
+> you already are that user, and `powval` isn't allowed to `sudo`.
+
 | Task | Command (on the VPS) |
 |---|---|
 | App logs | `journalctl -u powval -n 100 -f` |
@@ -193,14 +197,23 @@ is just the **sending** half — Resend.
 
 **C. Configure the server**
 
-Add to `/home/powval/app/.env` (mode 600, not in git):
+Add to `/home/powval/app/.env` (owned by the `powval` user, mode 600, not in git).
+Edit it **as that user** — note `powval` can't `sudo`, so the command depends on who
+you're logged in as (`whoami`):
 
 ```bash
-sudo -u powval tee -a /home/powval/app/.env >/dev/null <<'ENV'
+# logged in AS powval (you own the file — no sudo):
+nano /home/powval/app/.env
+# logged in as root / ubuntu:
+sudo -u powval nano /home/powval/app/.env
+```
+
+Add these three lines (use your real Resend key):
+
+```
 RESEND_API_KEY=re_your_key_here
 BACKUP_EMAIL_TO=will.lehmann@powval.com
 BACKUP_EMAIL_FROM=PowVal Backups <backups@powval.com>
-ENV
 ```
 
 No restart needed — the cron script reads `.env` each run.
@@ -208,7 +221,8 @@ No restart needed — the cron script reads `.env` each run.
 **D. Test it end to end**
 
 ```bash
-sudo -u powval /home/powval/app/deploy/backup-db.sh
+# logged in AS powval:        /home/powval/app/deploy/backup-db.sh
+# logged in as root/ubuntu:   sudo -u powval /home/powval/app/deploy/backup-db.sh
 ```
 
 You should get the `PowVal backup OK` email within a minute. To check the FAILED path,
