@@ -20,6 +20,8 @@ The two audiences are stored in **separate collections** so demand can be measur
 4. On success the form is replaced by a confirmation message (announced via `role="status"` for screen readers). A repeat signup is also treated as success — the confirmation acknowledges "you're already on the list" instead of showing an error. A "Wrong email? Re-enter it" button on the confirmation returns to the form (email preserved, input focused) so typos can be corrected.
 5. On validation error (invalid email, missing shop name) an inline error message is shown without a page reload, with the failing input highlighted and wired up via `aria-invalid` / `aria-describedby`.
 
+A successful **new consumer** signup also triggers a branded welcome email — see [Welcome email](#welcome-email-b2c) below.
+
 ---
 
 ## API contract
@@ -102,12 +104,37 @@ In production the DB is backed up nightly with 14-day rotation (see
 
 ---
 
+## Welcome email (B2C)
+
+When a **new consumer** joins the waitlist, the app sends them a branded welcome email. Consumer-only — shops are a separate audience and don't receive it.
+
+- **Trigger:** a successful *new* consumer signup in `services/waitlist.js`. Honeypot hits and duplicates never trigger it (a repeat signup means they were already welcomed).
+- **Best-effort & non-blocking:** the send is fire-and-forget — the HTTP response never waits on Resend, and any failure is logged, never surfaced to the user. A signup succeeds even if email is down or unconfigured.
+- **Transport:** `lib/email.js` posts to the same Resend REST endpoint and reuses the same `RESEND_API_KEY` as the nightly backup report (`deploy/backup-db.sh`). No key (or no sender) → the welcome email is silently disabled; signups still work.
+- **Template:** `emails/templates/waitlist-welcome.hbs` (Handlebars), rendered with `{ name }`. Imagery is raster-only and referenced by absolute URL (the brand SVGs don't render in email clients); the hero is a pre-rendered "Night Mountain" scene at `public/images/email-hero.png`. A plain-text alternative ships alongside the HTML for deliverability.
+
+### Config (`.env`)
+
+| Var | Needed | Purpose |
+|---|---|---|
+| `RESEND_API_KEY` | to send | Resend API key. Shared with the backup report. Unset = welcome email off. |
+| `WAITLIST_EMAIL_FROM` | to send | Sender, e.g. `powval <no-reply@powval.com>`. The domain must be verified in Resend (powval.com already is). Unset = welcome email off. |
+| `WAITLIST_EMAIL_REPLY_TO` | optional | Where replies route, since `no-reply@` isn't monitored. |
+| `RESEND_API_URL` | optional | Override the Resend endpoint (defaults to `https://api.resend.com/emails`). |
+
+To turn it on in production, set `WAITLIST_EMAIL_FROM` and make sure `RESEND_API_KEY` is set.
+
+---
+
 ## Module map
 
 | File | Role |
 |---|---|
 | `routes/waitlist.js` | Thin route handler — reads `req.body`, calls service, sends `res` |
-| `services/waitlist.js` | Validates input, routes to the consumer/shop collection, checks duplicates, writes via storage |
+| `services/waitlist.js` | Validates input, routes to the consumer/shop collection, checks duplicates, writes via storage, fires the consumer welcome email |
+| `services/waitlist-email.js` | Renders `waitlist-welcome.hbs` and sends the B2C welcome via `lib/email.js` (consumer-only, best-effort) |
+| `lib/email.js` | Shared Resend transport — best-effort `send()`; reuses `RESEND_API_KEY`, never throws into the request path |
 | `lib/storage.js` | Generic per-collection read/write interface (`waitlist`, `shops`) |
+| `emails/templates/waitlist-welcome.hbs` | Handlebars welcome email; "Night Mountain" hero (`public/images/email-hero.png`) |
 | `views/index.ejs` | Landing page shell; mounts all three Vue form instances |
 | `public/js/components/WaitlistForm.js` | Vue component — `audience` prop drives fields/copy, `variant: 'inline'` renders the compact hero layout; form state, validation, fetch, success/error UI |

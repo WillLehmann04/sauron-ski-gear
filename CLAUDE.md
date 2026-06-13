@@ -50,10 +50,16 @@ Keep other choices simple and swappable. Add dependencies deliberately.
 ├── content/                ← editable page data (roadmap.js, changelog.js)
 │
 ├── services/               ← business logic; routes call services
-│   └── waitlist.js         ← validation, dedup, orchestration
+│   ├── waitlist.js         ← validation, dedup, orchestration
+│   └── waitlist-email.js   ← renders + sends the B2C welcome email (consumer-only)
 │
 ├── lib/                    ← shared utilities and abstractions
-│   └── storage.js          ← storage interface (swap JSON ↔ SQLite without touching services)
+│   ├── storage.js          ← storage interface (swap JSON ↔ SQLite without touching services)
+│   └── email.js            ← Resend transport (best-effort send; reuses RESEND_API_KEY)
+│
+├── emails/                 ← transactional email templates (Handlebars)
+│   └── templates/
+│       └── waitlist-welcome.hbs  ← B2C waitlist welcome ("Night Mountain" hero)
 │
 ├── ml/                     ← valuation model: requirements, data pipeline, eval (planning stage)
 │   └── task_outline.md     ← full model requirements and phased delivery plan
@@ -86,8 +92,9 @@ Keep other choices simple and swappable. Add dependencies deliberately.
 **What belongs where:**
 
 - **`routes/`** — Express router files. Each file owns one resource. Handlers read `req`, call a service, and send `res`. No logic beyond that.
-- **`services/`** — All business logic. Validate input, enforce rules (dedup, formatting), call `lib/` for storage. Must not know about `req`/`res`.
-- **`lib/`** — Pure utilities and thin interfaces. `storage.js` exposes `read(collection)` / `write(collection, data)` so the backing store can be swapped.
+- **`services/`** — All business logic. Validate input, enforce rules (dedup, formatting), call `lib/` for storage. Must not know about `req`/`res`. `waitlist-email.js` renders + sends the consumer welcome email after a successful new signup.
+- **`lib/`** — Pure utilities and thin interfaces. `storage.js` exposes `read(collection)` / `write(collection, data)` so the backing store can be swapped. `email.js` is a best-effort Resend transport (shared with the deploy backup report via the same `RESEND_API_KEY`); it never throws into the request path.
+- **`emails/`** — Transactional email templates (Handlebars `.hbs`), rendered by `services/` and sent through `lib/email.js`. App-side and request-path, distinct from `deploy/templates/` (deployment/backup infra). Imagery must be raster (PNG) referenced by absolute URL — email clients don't render the brand SVGs.
 - **`views/`** — EJS only. Layouts wrap pages; partials are reused fragments. No business logic in templates.
 - **`public/`** — Static assets served as-is. Vue components live here as ES modules (no build step required for now).
 - **`data/`** — Runtime data. `powval.db` (SQLite) holds the `waitlist` and `shops` tables (separate collections so the two demand signals stay independent). Gitignored; keep a `.gitkeep` to preserve the directory.

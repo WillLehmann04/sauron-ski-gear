@@ -1,4 +1,5 @@
 const storage = require('../lib/storage');
+const waitlistEmail = require('./waitlist-email');
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -56,6 +57,14 @@ function signup({ email, name, type, shopName, hp } = {}) {
 
   list.push(entry);
   storage.write(collection, list);
+
+  // Welcome the new consumer (B2C only). Fire-and-forget: a mail failure must
+  // never fail the signup, and the request shouldn't wait on Resend.
+  if (audience === 'consumer') {
+    waitlistEmail.sendWelcome(entry).catch(err =>
+      console.error('waitlist welcome email failed:', err && err.message));
+  }
+
   return { ok: true };
 }
 

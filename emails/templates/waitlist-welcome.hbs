@@ -1,0 +1,105 @@
+{{!--
+  powval B2C waitlist welcome email. Sent when a consumer joins the waitlist.
+  Data: name (optional; greeting falls back to "there")
+
+  Design: PowVal's "Night Mountain" system in an inbox. The hero is a single
+  pre-rendered raster scene (public/images/email-hero.png: ink sky, starfield,
+  the orange chart-line cresting a peak, mountain ridges, slope-cut into the
+  body, Barlow Condensed headline) so it renders identically everywhere and
+  survives Outlook. bgcolor + alt text cover image-blocking. Barlow Condensed
+  loads via web font for the live headings/button (Apple Mail-class clients);
+  a condensed system stack is the fallback. Links are absolute (no relative
+  paths in email). Email-client-safe: tables, inline styles.
+--}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>You're on the powval waitlist</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+</head>
+<body style="margin:0;padding:0;background:#eef2f6;-webkit-text-size-adjust:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
+  <!-- preheader: hidden summary shown in inbox preview -->
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
+    You're on the powval waitlist. We'll email you the moment it's live.
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef2f6;padding:24px 12px;">
+    <tr><td align="center">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;">
+
+        <!-- header bar: logo lockup -->
+        <tr><td style="background:#091828;padding:15px 24px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+            <td width="30" valign="middle" style="padding-right:9px;">
+              <img src="https://powval.com/images/powval-icon-512.png" width="30" height="30" alt="powval" style="display:block;border:0;border-radius:7px;">
+            </td>
+            <td valign="middle" style="font-family:'Barlow Condensed','Arial Narrow',Helvetica,sans-serif;font-weight:800;font-size:23px;letter-spacing:0.02em;color:#ffffff;">pow<span style="color:#e87b1e;">val</span></td>
+            <td valign="middle" align="right" style="font-size:11px;font-weight:bold;letter-spacing:0.16em;text-transform:uppercase;color:#7fb2dc;">Waitlist</td>
+          </tr></table>
+        </td></tr>
+
+        <!-- hero: the Night Mountain scene (slope-cut bottom merges into the body) -->
+        <tr><td bgcolor="#091828" style="background:#091828;font-size:0;line-height:0;">
+          <img src="https://powval.com/images/email-hero.png" width="600" alt="powval — you're on the list" style="display:block;width:100%;max-width:600px;height:auto;border:0;">
+        </td></tr>
+
+        <!-- body -->
+        <tr><td style="padding:18px 30px 30px;">
+          <p style="margin:0 0 18px;font-size:17px;font-weight:bold;line-height:1.4;color:#1c2d3a;">
+            Hey {{#if name}}{{name}}{{else}}there{{/if}},
+          </p>
+
+          <p style="margin:0 0 16px;font-size:15px;line-height:1.65;color:#1c2d3a;">
+            You're on the powval waitlist. We're building the straight answer to one question: what's your ski and snowboard gear actually worth. When you can price it and sell it here, you'll be first to know.
+          </p>
+
+          <p style="margin:0 0 14px;font-size:15px;line-height:1.65;color:#1c2d3a;">
+            Where we're headed, and what's already in:
+          </p>
+
+          <!-- engagement cards -->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:2px 0 26px;">
+            <tr>
+              <td width="50%" valign="top" style="padding-right:6px;">
+                <a href="https://powval.com/roadmap" style="display:block;text-decoration:none;background:#f4f8fb;border:1px solid #d6e6f2;border-radius:10px;padding:16px 18px;">
+                  <span style="display:block;font-family:'Barlow Condensed','Arial Narrow',Helvetica,sans-serif;font-size:18px;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;color:#1c2d3a;">The roadmap</span>
+                  <span style="display:block;margin-top:3px;font-size:12px;line-height:1.45;color:#5a7088;">Where powval goes next.</span>
+                </a>
+              </td>
+              <td width="50%" valign="top" style="padding-left:6px;">
+                <a href="https://powval.com/changelog" style="display:block;text-decoration:none;background:#f4f8fb;border:1px solid #d6e6f2;border-radius:10px;padding:16px 18px;">
+                  <span style="display:block;font-family:'Barlow Condensed','Arial Narrow',Helvetica,sans-serif;font-size:18px;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;color:#1c2d3a;">What's new</span>
+                  <span style="display:block;margin-top:3px;font-size:12px;line-height:1.45;color:#5a7088;">Everything shipped so far.</span>
+                </a>
+              </td>
+            </tr>
+          </table>
+
+          <!-- share nudge -->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#091828;border-radius:12px;">
+            <tr><td style="padding:24px 24px 26px;">
+              <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#dce9f4;">
+                <strong style="color:#ffffff;">Know someone sitting on gear they'll never ride again?</strong> Send them our way.
+              </p>
+              <a href="https://powval.com" style="display:inline-block;background:#e87b1e;color:#ffffff;text-decoration:none;font-family:'Barlow Condensed','Arial Narrow',Helvetica,sans-serif;font-size:17px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;padding:13px 26px;border-radius:8px;box-shadow:0 4px 18px rgba(232,123,30,0.32);">Tell a mate</a>
+            </td></tr>
+          </table>
+
+          <p style="margin:26px 0 0;font-size:15px;line-height:1.6;color:#5a7088;">
+            See you on the hill,<br><strong style="color:#1c2d3a;">The powval crew</strong>
+          </p>
+        </td></tr>
+
+        <!-- footer -->
+        <tr><td style="background:#f8fafc;border-top:1px solid #eef2f6;padding:18px 30px;">
+          <p style="margin:0;font-size:12px;line-height:1.5;color:#8a9bb0;">You're on this list because you signed up at <a href="https://powval.com" style="color:#5a7088;text-decoration:underline;">powval.com</a>. We'll only email you about your spot and launch news.</p>
+        </td></tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>
