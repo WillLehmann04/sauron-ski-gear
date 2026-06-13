@@ -52,6 +52,9 @@ Keep other choices simple and swappable. Add dependencies deliberately.
 ├── lib/                    ← shared utilities and abstractions
 │   └── storage.js          ← storage interface (swap JSON ↔ SQLite without touching services)
 │
+├── ml/                     ← valuation model: requirements, data pipeline, eval (planning stage)
+│   └── task_outline.md     ← full model requirements and phased delivery plan
+│
 ├── views/
 │   ├── layouts/
 │   │   └── main.ejs        ← shared HTML shell (head, nav, footer)
@@ -82,6 +85,7 @@ Keep other choices simple and swappable. Add dependencies deliberately.
 - **`views/`** — EJS only. Layouts wrap pages; partials are reused fragments. No business logic in templates.
 - **`public/`** — Static assets served as-is. Vue components live here as ES modules (no build step required for now).
 - **`data/`** — Runtime data files. Consumer signups in `waitlist.json`, ski-shop signups in `shops.json` (separate collections so the two demand signals stay independent). Both gitignored; keep a `.gitkeep` to preserve the directory.
+- **`ml/`** — The valuation model workspace: requirements (`task_outline.md`), and later the data-spike scripts, parser eval sets, and model evaluation harness. Request-path estimator code still lives in `routes/` + `services/` like everything else; `ml/` holds the offline/model side.
 - **`docs/`** — One Markdown file per feature/module. `docs/README.md` is the index. Keep in sync with code.
 
 ---
