@@ -111,7 +111,7 @@ When a **new consumer** joins the waitlist, the app sends them a branded welcome
 - **Trigger:** a successful *new* consumer signup in `services/waitlist.js`. Honeypot hits and duplicates never trigger it (a repeat signup means they were already welcomed).
 - **Best-effort & non-blocking:** the send is fire-and-forget — the HTTP response never waits on Resend, and any failure is logged, never surfaced to the user. A signup succeeds even if email is down or unconfigured.
 - **Transport:** `lib/email.js` posts to the same Resend REST endpoint and reuses the same `RESEND_API_KEY` as the nightly backup report (`deploy/backup-db.sh`). No key (or no sender) → the welcome email is silently disabled; signups still work.
-- **Template:** `emails/templates/waitlist-welcome.hbs` (Handlebars), rendered with `{ name }`. Imagery is raster-only and referenced by absolute URL (the brand SVGs don't render in email clients); the hero is a pre-rendered "Night Mountain" scene at `public/images/email-hero.png`. A plain-text alternative ships alongside the HTML for deliverability.
+- **Template:** `emails/templates/waitlist-welcome.hbs` (Handlebars), rendered with `{ name }`. Cohesive dark "Night Mountain" design top to bottom. Imagery is raster-only and referenced by absolute URL (the brand SVGs don't render in email clients); the hero is a pre-rendered scene at `public/images/email-hero.jpg` (JPEG q90, ~94 KB — down from a 360 KB PNG; the baked Barlow headline stays crisp), and the header logo uses a right-sized `powval-icon-60.png` (~4 KB). A plain-text alternative ships alongside the HTML for deliverability.
 
 ### Config (`.env`)
 
@@ -135,6 +135,6 @@ To turn it on in production, set `WAITLIST_EMAIL_FROM` and make sure `RESEND_API
 | `services/waitlist-email.js` | Renders `waitlist-welcome.hbs` and sends the B2C welcome via `lib/email.js` (consumer-only, best-effort) |
 | `lib/email.js` | Shared Resend transport — best-effort `send()`; reuses `RESEND_API_KEY`, never throws into the request path |
 | `lib/storage.js` | Generic per-collection read/write interface (`waitlist`, `shops`) |
-| `emails/templates/waitlist-welcome.hbs` | Handlebars welcome email; "Night Mountain" hero (`public/images/email-hero.png`) |
+| `emails/templates/waitlist-welcome.hbs` | Handlebars welcome email; cohesive dark "Night Mountain" design, hero (`public/images/email-hero.jpg`) |
 | `views/index.ejs` | Landing page shell; mounts all three Vue form instances |
 | `public/js/components/WaitlistForm.js` | Vue component — `audience` prop drives fields/copy, `variant: 'inline'` renders the compact hero layout; form state, validation, fetch, success/error UI |
