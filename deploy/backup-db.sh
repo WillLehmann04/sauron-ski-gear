@@ -10,6 +10,7 @@
 #                       (catches the case where the whole box/cron dies and no email is sent)
 set -uo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DB="/home/powval/app/data/powval.db"
 DEST="/home/powval/backups"
 ENV_FILE="/home/powval/app/.env"
@@ -24,11 +25,20 @@ EMAIL_FROM="$(getenv BACKUP_EMAIL_FROM)"
 HEALTHCHECK_URL="$(getenv HEALTHCHECK_URL)"
 RESEND_API_URL="$(getenv RESEND_API_URL)"; RESEND_API_URL="${RESEND_API_URL:-https://api.resend.com/emails}"
 
-send_email() {  # $1 subject, $2 body
+# Render the HTML email from the Handlebars template. Falls back to empty
+# (text-only email) if node/handlebars/template is unavailable — a template
+# problem must never block the backup report.
+render_html() {  # $1: JSON data object
+  printf '%s' "$1" | node "${SCRIPT_DIR}/render-email.js" 2>/dev/null || true
+}
+
+send_report() {  # $1 subject, $2 plaintext body, $3 JSON data for the template
   [[ -n "${RESEND_API_KEY}" && -n "${EMAIL_TO}" && -n "${EMAIL_FROM}" ]] || return 0
-  local payload
-  payload="$(jq -nc --arg f "${EMAIL_FROM}" --arg t "${EMAIL_TO}" --arg s "$1" --arg b "$2" \
-    '{from:$f, to:[$t], subject:$s, text:$b}')"
+  local html payload
+  html="$(render_html "$3")"
+  payload="$(jq -nc --arg f "${EMAIL_FROM}" --arg t "${EMAIL_TO}" --arg s "$1" \
+    --arg txt "$2" --arg html "${html}" \
+    '{from:$f, to:[$t], subject:$s, text:$txt} + (if $html == "" then {} else {html:$html} end)')"
   # Email failure must never fail the backup itself — log and move on.
   curl -fsS -m 15 --retry 2 "${RESEND_API_URL}" \
     -H "Authorization: Bearer ${RESEND_API_KEY}" \
@@ -49,22 +59,33 @@ if out="$( { mkdir -p "${DEST}" \
     && ls -1t "${DEST}"/powval-*.db.gz 2>/dev/null | tail -n +15 | xargs -r rm --; } 2>&1 )"; then
   size="$(du -h "${DEST}/powval-${STAMP}.db.gz" 2>/dev/null | cut -f1 || echo '?')"
   kept="$(ls -1 "${DEST}"/powval-*.db.gz 2>/dev/null | wc -l | tr -d ' ')"
-  echo "$(date) backup ok: powval-${STAMP}.db.gz (${size}), ${kept} kept"
-  send_email "PowVal backup OK: ${STAMP}" \
-"Backup succeeded on ${HOST} at $(date).
+  now="$(date)"
+  echo "${now} backup ok: powval-${STAMP}.db.gz (${size}), ${kept} kept"
+  data="$(jq -nc --argjson success true --arg host "${HOST}" --arg timestamp "${now}" \
+    --arg stamp "${STAMP}" --arg file "powval-${STAMP}.db.gz" --arg size "${size}" \
+    --arg retained "${kept}" --arg dest "${DEST}" --arg output "" \
+    '{success:$success, host:$host, timestamp:$timestamp, stamp:$stamp, file:$file, size:$size, retained:$retained, dest:$dest, output:$output}')"
+  send_report "PowVal backup OK: ${STAMP}" \
+"Backup succeeded on ${HOST} at ${now}.
 
 File:     powval-${STAMP}.db.gz (${size})
-Retained: ${kept} backups in ${DEST}"
+Retained: ${kept} backups in ${DEST}" \
+    "${data}"
   ping_hc
 else
-  echo "$(date) backup FAILED"; echo "${out}"
-  send_email "PowVal backup FAILED: ${STAMP}" \
-"Backup FAILED on ${HOST} at $(date).
+  now="$(date)"
+  echo "${now} backup FAILED"; echo "${out}"
+  data="$(jq -nc --argjson success false --arg host "${HOST}" --arg timestamp "${now}" \
+    --arg stamp "${STAMP}" --arg dest "${DEST}" --arg output "${out}" \
+    '{success:$success, host:$host, timestamp:$timestamp, stamp:$stamp, dest:$dest, output:$output}')"
+  send_report "PowVal backup FAILED: ${STAMP}" \
+"Backup FAILED on ${HOST} at ${now}.
 
 Output:
 ${out}
 
-Investigate on the server (journalctl, ${DEST})."
+Investigate on the server (journalctl, ${DEST})." \
+    "${data}"
   ping_hc /fail
   exit 1
 fi

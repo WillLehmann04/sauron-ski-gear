@@ -20,7 +20,9 @@ Everything scriptable lives in `deploy/`:
 | `powval.service` | systemd unit installed by setup |
 | `Caddyfile` | Reverse-proxy + HTTPS config installed by setup |
 | `deploy.sh` | Pull latest main, install deps, restart, health-check |
-| `backup-db.sh` | Nightly SQLite backup (cron-installed by setup) |
+| `backup-db.sh` | Nightly SQLite backup + email report (cron-installed by setup) |
+| `render-email.js` | Renders the backup report email from the Handlebars template |
+| `templates/backup-email.hbs` | HTML email template (one template, success + failure states) |
 
 ---
 
@@ -174,6 +176,11 @@ Test the restore path once after first deploy, not during an incident.
 `will.lehmann@powval.com`. It sends via [Resend](https://resend.com) (a transactional
 email API), because a VPS can't reliably send mail itself (DigitalOcean blocks outbound
 port 25; plain server mail lands in spam).
+
+The email body is HTML, rendered from `deploy/templates/backup-email.hbs` (a single
+Handlebars template covering both success and failure) by `deploy/render-email.js`. A
+plaintext version is always included as a fallback; if rendering ever fails (e.g.
+`handlebars` not yet installed), the email still sends text-only.
 
 Receiving is already handled (the inbox is hosted externally, IMAP → Outlook), so this
 is just the **sending** half — Resend.
