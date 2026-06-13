@@ -111,9 +111,12 @@ systemctl --no-pager --lines=3 status powval || true
 sed "s/{\$DOMAIN}/${DOMAIN}/g" "${APP_DIR}/deploy/Caddyfile" > /etc/caddy/Caddyfile
 systemctl reload caddy
 
-# ── Nightly DB backup (3:15am) ───────────────────────────────────
+# ── Timezone (so cron times are local, DST-safe) ─────────────────
+timedatectl set-timezone Australia/Adelaide
+
+# ── Daily DB backup (9:00pm Adelaide) ────────────────────────────
 cat > /etc/cron.d/powval-backup <<CRON
-15 3 * * * ${APP_USER} ${APP_DIR}/deploy/backup-db.sh >> /home/${APP_USER}/backups/backup.log 2>&1
+0 21 * * * ${APP_USER} ${APP_DIR}/deploy/backup-db.sh >> /home/${APP_USER}/backups/backup.log 2>&1
 CRON
 sudo -u "${APP_USER}" mkdir -p "/home/${APP_USER}/backups"
 chmod 644 /etc/cron.d/powval-backup

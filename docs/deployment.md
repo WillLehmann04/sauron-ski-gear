@@ -163,7 +163,7 @@ TRUST_PROXY_HOPS=2   # Cloudflare -> Caddy -> app; rate limiter needs real clien
 | Restart app | `sudo systemctl restart powval` |
 | Caddy logs | `journalctl -u caddy -n 50` |
 | Inspect signups | `sqlite3 /home/powval/app/data/powval.db 'SELECT COUNT(*) FROM waitlist'` |
-| Backups | `ls /home/powval/backups/` (nightly 3:15am, 14 kept, log in `/home/powval/backups/backup.log`) |
+| Backups | `ls /home/powval/backups/` (daily 9:00pm Adelaide, 14 kept, log in `/home/powval/backups/backup.log`) |
 | Run a backup now | `sudo -u powval /home/powval/app/deploy/backup-db.sh` |
 | Restore a backup | `gunzip -k powval-<date>.db.gz` → stop app → replace `data/powval.db` → start |
 
