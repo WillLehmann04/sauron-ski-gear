@@ -2,6 +2,8 @@ node_modules/
 .env
 data/waitlist.json
 data/shops.json
+data/*.json.imported
+data/powval.db*
 .DS_Store
 .superpowers
 .agents/

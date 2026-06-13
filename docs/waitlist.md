@@ -76,24 +76,29 @@ Duplicates are checked **per collection** — the same email may exist once on t
 
 ## Storage format
 
-Signups are persisted as JSON arrays in two files via `lib/storage.js`:
+Signups are persisted in **SQLite** (`data/powval.db`, WAL mode, via `better-sqlite3`)
+behind the same `lib/storage.js` `read(collection)` / `write(collection, data)`
+interface the JSON files used — the swap touched no service code.
 
-- **`data/waitlist.json`** — consumer signups.
-- **`data/shops.json`** — shop signups (adds `shopName`).
+Two tables, one per collection:
 
-```json
-// data/shops.json
-[
-  {
-    "email": "owner@powderhouse.com",
-    "name": "",
-    "shopName": "Powder House Skis",
-    "createdAt": "2026-06-10T00:00:00.000Z"
-  }
-]
+| Table | Columns |
+|---|---|
+| `waitlist` | `email`, `name`, `createdAt` |
+| `shops` | `email`, `name`, `shopName`, `createdAt` |
+
+On first startup after the migration, any legacy `data/waitlist.json` / `data/shops.json`
+rows are imported once and the files renamed to `*.json.imported` (kept as a manual
+rollback, never deleted). The DB and imported files are gitignored.
+
+Inspect signups directly:
+
+```bash
+sqlite3 data/powval.db 'SELECT * FROM waitlist'
 ```
 
-The storage layer (`lib/storage.js`) abstracts reads and writes per collection, so the backing store can be replaced with SQLite or another store without touching the service. Both files are gitignored.
+In production the DB is backed up nightly with 14-day rotation (see
+[deployment.md](./deployment.md)).
 
 ---
 
