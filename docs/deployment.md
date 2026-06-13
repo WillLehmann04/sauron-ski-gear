@@ -87,15 +87,30 @@ curl -s http://127.0.0.1:3000/ | head -c 100   # HTML from the app
 
 ## Deploying updates
 
-After merging to `main`:
+### Automatic (push to main)
+
+`.github/workflows/deploy.yml` deploys on every push to `main`: it SSHes to the VPS
+with a dedicated CI key and runs `deploy.sh`. The key is command-restricted in
+`authorized_keys` — it can only trigger the deploy script, never open a shell.
+
+One-time enablement after `setup-vps.sh` (which prints the key and these steps):
+
+1. GitHub repo → Settings → Secrets and variables → Actions → **secrets**
+   `VPS_HOST` (the droplet IP) and `VPS_SSH_KEY` (the printed private key).
+2. Same page → **Variables** → `DEPLOY_ENABLED` = `true`.
+
+Until `DEPLOY_ENABLED` is set, the workflow skips silently, so pushes before the VPS
+exists don't produce failed runs. Deploy status appears next to each commit on GitHub.
+
+### Manual (always available)
 
 ```bash
 ssh powval@<droplet-ip> '~/app/deploy/deploy.sh'
 ```
 
 Pulls, installs production deps, restarts the service, and health-checks. Rollback is
-`git checkout <previous-sha> && deploy/deploy.sh` minus the pull (or revert the commit
-on main and deploy again).
+reverting the commit on `main` and letting auto-deploy run (or `git checkout
+<previous-sha>` on the box + `deploy/deploy.sh` minus the pull).
 
 ## Production environment
 

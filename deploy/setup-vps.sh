@@ -52,6 +52,21 @@ sudo -u "${APP_USER}" bash -c '
     mkdir -p ~/.ssh && chmod 700 ~/.ssh
     ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519 -C "powval-deploy" -q
   fi'
+
+# Let the admin's keys (used for root) also log in as the app user.
+if [[ -f /root/.ssh/authorized_keys ]]; then
+  sudo -u "${APP_USER}" mkdir -p "/home/${APP_USER}/.ssh"
+  touch "/home/${APP_USER}/.ssh/authorized_keys"
+  while IFS= read -r key; do
+    grep -qF "${key}" "/home/${APP_USER}/.ssh/authorized_keys" || echo "${key}" >> "/home/${APP_USER}/.ssh/authorized_keys"
+  done < /root/.ssh/authorized_keys
+  chown -R "${APP_USER}:${APP_USER}" "/home/${APP_USER}/.ssh"
+  chmod 600 "/home/${APP_USER}/.ssh/authorized_keys"
+fi
+
+# The app user may restart its own service (used by deploy.sh / CI) — nothing else.
+echo "${APP_USER} ALL=(root) NOPASSWD: /usr/bin/systemctl restart powval" > /etc/sudoers.d/powval-deploy
+chmod 440 /etc/sudoers.d/powval-deploy
 echo ""
 echo "== Add this READ-ONLY deploy key to the GitHub repo (Settings > Deploy keys):"
 echo "----------------------------------------------------------------------"
@@ -96,8 +111,30 @@ CRON
 sudo -u "${APP_USER}" mkdir -p "/home/${APP_USER}/backups"
 chmod 644 /etc/cron.d/powval-backup
 
+# ── CI deploy key (GitHub Actions auto-deploy) ───────────────────
+# Command-restricted: a connection with this key can ONLY run deploy.sh.
+CI_KEY="/home/${APP_USER}/.ssh/ci_deploy"
+if [[ ! -f "${CI_KEY}" ]]; then
+  sudo -u "${APP_USER}" ssh-keygen -t ed25519 -N "" -f "${CI_KEY}" -C "powval-ci" -q
+fi
+CI_PUB="$(cat "${CI_KEY}.pub")"
+RESTRICT="command=\"/home/${APP_USER}/app/deploy/deploy.sh\",no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty"
+grep -qF "${CI_PUB}" "/home/${APP_USER}/.ssh/authorized_keys" || \
+  echo "${RESTRICT} ${CI_PUB}" >> "/home/${APP_USER}/.ssh/authorized_keys"
+
 echo ""
 echo "== Done. Checks:"
 echo "   curl -s http://127.0.0.1:3000/ | head -c 80   # app answers locally"
 echo "   Then point DNS at this box (see docs/deployment.md) and Caddy"
 echo "   will fetch the HTTPS certificate automatically."
+echo ""
+echo "== To enable auto-deploy on push (GitHub repo settings):"
+echo "   1. Secrets and variables > Actions > New repository secret:"
+echo "        VPS_HOST    = this server's IP"
+echo "        VPS_SSH_KEY = the private key below (entire block, incl. BEGIN/END lines)"
+echo "   2. Secrets and variables > Actions > Variables > New variable:"
+echo "        DEPLOY_ENABLED = true"
+echo "----------------------------------------------------------------------"
+cat "${CI_KEY}"
+echo "----------------------------------------------------------------------"
+echo "   (This key can only trigger deploy.sh — it cannot open a shell.)"

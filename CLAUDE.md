@@ -88,6 +88,7 @@ Keep other choices simple and swappable. Add dependencies deliberately.
 - **`public/`** — Static assets served as-is. Vue components live here as ES modules (no build step required for now).
 - **`data/`** — Runtime data. `powval.db` (SQLite) holds the `waitlist` and `shops` tables (separate collections so the two demand signals stay independent). Gitignored; keep a `.gitkeep` to preserve the directory.
 - **`deploy/`** — Production deployment kit: `setup-vps.sh` (one-time provisioning), `powval.service` (systemd), `Caddyfile`, `deploy.sh` (update + restart), `backup-db.sh` (nightly cron). Documented in `docs/deployment.md`.
+- **`.github/workflows/`** — CI. `deploy.yml` auto-deploys `main` to the VPS over SSH (gated on the `DEPLOY_ENABLED` repo variable; see `docs/deployment.md`).
 - **`ml/`** — The valuation model workspace: requirements (`task_outline.md`), and later the data-spike scripts, parser eval sets, and model evaluation harness. Request-path estimator code still lives in `routes/` + `services/` like everything else; `ml/` holds the offline/model side.
 - **`docs/`** — One Markdown file per feature/module. `docs/README.md` is the index. Keep in sync with code.
 
