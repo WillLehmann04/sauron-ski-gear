@@ -63,6 +63,9 @@ setInterval(() => {
 
 app.use('/', require('./routes/index'));
 app.use('/waitlist', rateLimit({ windowMs: 60 * 1000, max: 8 }), require('./routes/waitlist'));
+// eBay account-deletion notification endpoint (validation + notifications).
+// Not rate-limited — eBay's handshake and notifications must always get through.
+app.use('/deletion', require('./routes/ebay-deletion'));
 
 const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

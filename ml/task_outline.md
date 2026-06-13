@@ -5,6 +5,7 @@ model, its data, its serving path, and the order to build it in.
 
 **Status:** planning. Nothing in this directory ships yet.
 **Owner:** Will. **Last updated:** 2026-06-13.
+**Execution plan:** [`development-plan.md`](development-plan.md) turns these requirements into a phase-by-phase roadmap (structure, schemas, interfaces, acceptance gates).
 
 ---
 

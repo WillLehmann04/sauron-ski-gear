@@ -45,13 +45,15 @@ Keep other choices simple and swappable. Add dependencies deliberately.
 │
 ├── routes/                 ← thin route handlers only; no business logic
 │   ├── index.js            ← GET / , GET /roadmap , GET /changelog
-│   └── waitlist.js         ← POST /waitlist
+│   ├── waitlist.js         ← POST /waitlist
+│   └── ebay-deletion.js    ← GET/POST /deletion (eBay account-deletion webhook)
 │
 ├── content/                ← editable page data (roadmap.js, changelog.js)
 │
 ├── services/               ← business logic; routes call services
 │   ├── waitlist.js         ← validation, dedup, orchestration
-│   └── waitlist-email.js   ← renders + sends the B2C welcome email (consumer-only)
+│   ├── waitlist-email.js   ← renders + sends the B2C welcome email (consumer-only)
+│   └── ebay-deletion.js    ← eBay account-deletion challenge/response
 │
 ├── lib/                    ← shared utilities and abstractions
 │   ├── storage.js          ← storage interface (swap JSON ↔ SQLite without touching services)
@@ -100,7 +102,7 @@ Keep other choices simple and swappable. Add dependencies deliberately.
 - **`data/`** — Runtime data. `powval.db` (SQLite) holds the `waitlist` and `shops` tables (separate collections so the two demand signals stay independent). Gitignored; keep a `.gitkeep` to preserve the directory.
 - **`deploy/`** — Production deployment kit: `setup-vps.sh` (one-time provisioning), `powval.service` (systemd), `Caddyfile`, `deploy.sh` (update + restart), `backup-db.sh` (nightly cron + email report), `render-email.js` + `templates/backup-email.hbs` (Handlebars HTML backup email, success + failure). Documented in `docs/deployment.md`.
 - **`.github/workflows/`** — CI. `deploy.yml` auto-deploys `main` to the VPS over SSH (gated on the `DEPLOY_ENABLED` repo variable; see `docs/deployment.md`).
-- **`ml/`** — The valuation model workspace: requirements (`task_outline.md`), and later the data-spike scripts, parser eval sets, and model evaluation harness. Request-path estimator code still lives in `routes/` + `services/` like everything else; `ml/` holds the offline/model side.
+- **`ml/`** — The valuation model workspace: requirements (`task_outline.md`), the phase-by-phase execution plan (`development-plan.md`), and later the data-spike scripts, parser eval sets, and model evaluation harness. Request-path estimator code still lives in `routes/` + `services/` like everything else; `ml/` holds the offline/model side.
 - **`content/`** — Editable data for static content pages: `roadmap.js` (goals with `done`/`active`/`planned` status) and `changelog.js` (dated entries with `new`/`improved`/`fixed` tags). Routes pass these to the EJS pages; update the data file to update the page. Both pages are linked only from the footer.
 - **`docs/`** — One Markdown file per feature/module. `docs/README.md` is the index. Keep in sync with code.
 
@@ -149,6 +151,7 @@ All config and secrets via `.env` loaded by `dotenv`. Never hardcode values. Com
 npm install          # install dependencies
 npm run dev          # start server with nodemon (auto-reload)
 npm start            # start server (production)
+npm test             # run the test suite (node --test)
 ```
 
 > Update this section whenever scripts change in `package.json`.
