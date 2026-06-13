@@ -241,14 +241,27 @@ function initSnow() {
       hero.addEventListener('mouseleave', () => snowgl.onMouse(-9999, -9999), { passive: true });
     }
 
+    // Only run the rAF loop while the hero is in the viewport — the snow is
+    // invisible (and pure GPU waste) once the user scrolls to the form.
     let last = 0;
+    let rafId = null;
     function frame(ts) {
       const dt = last ? Math.min(ts - last, 50) : 16;
       last = ts;
       snowgl.tick(dt);
-      requestAnimationFrame(frame);
+      rafId = requestAnimationFrame(frame);
     }
-    requestAnimationFrame(frame);
+
+    new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          if (!rafId) { last = 0; rafId = requestAnimationFrame(frame); }
+        } else if (rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+        }
+      });
+    }, { threshold: 0 }).observe(canvas);
   } else {
     _canvas2DSnow(canvas);
   }
@@ -326,8 +339,8 @@ function initPriceCounter() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const CYCLE  = 12000; // ms — must match CSS animation-duration
-  const FROM   = 0.71;
-  const TO     = 0.79;
+  const FROM   = 0.54;  // value state enters at 50%, price fully visible by 56%
+  const TO     = 0.62;
   const TARGET = 420;
   let   rafId  = null;
 

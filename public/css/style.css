@@ -30,7 +30,7 @@ canvas    { touch-action: pan-y; }
   padding: 10px 16px;
   border-radius: 8px;
   text-decoration: none;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 16px rgba(28, 60, 90, 0.30);
   transition: top 0.2s ease;
 }
 .skip-link:focus { top: 12px; }
@@ -80,7 +80,7 @@ canvas    { touch-action: pan-y; }
   /* Shared elevation for white cards floating on dark ink. */
   --card-shadow:
     0 0 0 1px   rgba(255, 255, 255, 0.06),
-    0 20px 60px rgba(0, 0, 0, 0.45),
+    0 20px 60px rgba(4, 12, 24, 0.50),
     0 0 80px    rgba(58, 122, 170, 0.07);
   --error:          #dc2626;
   --error-bg:       #fef2f2;
@@ -319,28 +319,19 @@ body {
   transition: color 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.nav__logo-icon {
-  width: 22px;
-  height: 22px;
+.nav__logo-mark {
+  display: block;
+  height: 26px;
+  width: auto;
   flex-shrink: 0;
-  border-radius: 5px;
-  opacity: 0.95;
-  transition: opacity 0.22s ease;
 }
 
-.nav__logo:hover .nav__logo-icon { opacity: 1; }
+/* When the nav solidifies (light bg), recolour the near-white "Pow"
+   glyphs to navy so the wordmark stays legible. */
+.nav--solid .nav__logo-mark .pv-pow { fill: var(--navy); }
 
-.nav__logo:hover { text-shadow: 0 0 22px rgba(255, 255, 255, 0.2); }
-
-.nav--solid .nav__logo { color: var(--navy); }
-.nav--solid .nav__logo:hover { text-shadow: none; }
-
-.nav__logo span {
-  color: var(--orange-cta);
-  transition: text-shadow 0.22s ease;
-}
-
-.nav__logo:hover span { text-shadow: 0 0 20px rgba(232, 123, 30, 0.50); }
+.nav__logo { opacity: 0.95; transition: opacity 0.22s ease; }
+.nav__logo:hover { opacity: 1; }
 
 .nav__links {
   display: flex;
@@ -359,8 +350,8 @@ body {
 
 .nav__link {
   position: relative;
-  cursor: default;
-  user-select: none;
+  color: inherit;
+  text-decoration: none;
   padding-bottom: 2px;
   transition: opacity 0.2s ease;
 }
@@ -580,7 +571,7 @@ body {
   font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(168, 214, 245, 0.62);
+  color: rgba(168, 214, 245, 0.80);
   margin-bottom: 20px;
   transition:
     opacity   0.65s cubic-bezier(0.16, 1, 0.3, 1) 0ms,
@@ -644,7 +635,7 @@ body {
   overflow: hidden;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.11),
-    0 28px 72px rgba(0, 0, 0, 0.40),
+    0 28px 72px rgba(4, 12, 24, 0.45),
     0 0  60px 14px rgba(14, 52, 110, 0.34),
     0 0 120px 40px rgba(7,  32,  80, 0.20);
   transition:
@@ -700,30 +691,31 @@ body {
   will-change: opacity, transform, filter;
 }
 
-/* 12s loop: 3 states × 4s each, blur-fade transitions */
+/* 12s loop, weighted toward the payoff: gear ~2.5s, scan ~2s, value ~6s.
+   The estimate is the product — the $ result leads the dwell time. */
 .val-s--gear  { animation: vsGear  12s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
 .val-s--scan  { animation: vsScan  12s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
 .val-s--value { animation: vsValue 12s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
 
 @keyframes vsGear {
   0%    { opacity: 0; filter: blur(14px); transform: translateY(10px); }
-  5%    { opacity: 1; filter: blur(0);    transform: translateY(0); }
-  28%   { opacity: 1; filter: blur(0);    transform: translateY(0); }
-  33%   { opacity: 0; filter: blur(14px); transform: translateY(-8px); }
+  4%    { opacity: 1; filter: blur(0);    transform: translateY(0); }
+  20%   { opacity: 1; filter: blur(0);    transform: translateY(0); }
+  25%   { opacity: 0; filter: blur(14px); transform: translateY(-8px); }
   100%  { opacity: 0; filter: blur(14px); transform: translateY(10px); }
 }
 @keyframes vsScan {
-  0%, 33%  { opacity: 0; filter: blur(14px); transform: translateY(10px); }
-  38%      { opacity: 1; filter: blur(0);    transform: translateY(0); }
-  61%      { opacity: 1; filter: blur(0);    transform: translateY(0); }
-  66%      { opacity: 0; filter: blur(14px); transform: translateY(-8px); }
+  0%, 27%  { opacity: 0; filter: blur(14px); transform: translateY(10px); }
+  31%      { opacity: 1; filter: blur(0);    transform: translateY(0); }
+  42%      { opacity: 1; filter: blur(0);    transform: translateY(0); }
+  46%      { opacity: 0; filter: blur(14px); transform: translateY(-8px); }
   100%     { opacity: 0; filter: blur(14px); transform: translateY(10px); }
 }
 @keyframes vsValue {
-  0%, 66%  { opacity: 0; filter: blur(14px); transform: translateY(10px); }
-  71%      { opacity: 1; filter: blur(0);    transform: translateY(0); }
-  94%      { opacity: 1; filter: blur(0);    transform: translateY(0); }
-  99%      { opacity: 0; filter: blur(14px); transform: translateY(-8px); }
+  0%, 50%  { opacity: 0; filter: blur(14px); transform: translateY(10px); }
+  54%      { opacity: 1; filter: blur(0);    transform: translateY(0); }
+  95%      { opacity: 1; filter: blur(0);    transform: translateY(0); }
+  99.5%    { opacity: 0; filter: blur(14px); transform: translateY(-8px); }
   100%     { opacity: 0; filter: blur(14px); transform: translateY(10px); }
 }
 
@@ -752,11 +744,11 @@ body {
 }
 
 @keyframes scanBeam {
-  0%, 33%  { transform: translateY(-48px); opacity: 0; }
-  38%      { transform: translateY(-48px); opacity: 1; }
-  63%      { transform: translateY(338px); opacity: 0.6; }
-  65%      { opacity: 0; }
-  66%, 100%{ transform: translateY(-48px); opacity: 0; }
+  0%, 27%  { transform: translateY(-48px); opacity: 0; }
+  30%      { transform: translateY(-48px); opacity: 1; }
+  43%      { transform: translateY(338px); opacity: 0.6; }
+  45%      { opacity: 0; }
+  46%, 100%{ transform: translateY(-48px); opacity: 0; }
 }
 
 /* ── Eyebrow ───────────────────────────────────── */
@@ -817,11 +809,11 @@ body {
 }
 
 @keyframes vsPriceIn {
-  0%, 66%  { transform: scale(0.82) translateY(6px); filter: blur(10px); opacity: 0; }
-  72%      { transform: scale(1.05) translateY(0);   filter: blur(0);    opacity: 1; }
-  76%      { transform: scale(1.0)  translateY(0);   filter: blur(0);    opacity: 1; }
-  94%      { transform: scale(1.0)  translateY(0);   filter: blur(0);    opacity: 1; }
-  99%      { transform: scale(0.95) translateY(-4px); filter: blur(6px); opacity: 0; }
+  0%, 50%  { transform: scale(0.82) translateY(6px); filter: blur(10px); opacity: 0; }
+  56%      { transform: scale(1.05) translateY(0);   filter: blur(0);    opacity: 1; }
+  60%      { transform: scale(1.0)  translateY(0);   filter: blur(0);    opacity: 1; }
+  95%      { transform: scale(1.0)  translateY(0);   filter: blur(0);    opacity: 1; }
+  99.5%    { transform: scale(0.95) translateY(-4px); filter: blur(6px); opacity: 0; }
   100%     { transform: scale(0.82) translateY(6px); filter: blur(10px); opacity: 0; }
 }
 
@@ -847,23 +839,23 @@ body {
 .val-s--value .val-s__rule-fill { animation: vsRuleValue 12s linear infinite; }
 
 @keyframes vsRuleGear {
-  0%, 5%  { transform: scaleX(0); }
+  0%, 4%  { transform: scaleX(0); }
+  14%     { transform: scaleX(1); }
   20%     { transform: scaleX(1); }
-  28%     { transform: scaleX(1); }
-  33%     { transform: scaleX(0); }
+  25%     { transform: scaleX(0); }
   100%    { transform: scaleX(0); }
 }
 @keyframes vsRuleScan {
-  0%, 38% { transform: scaleX(0); }
-  52%     { transform: scaleX(1); }
-  61%     { transform: scaleX(1); }
-  66%     { transform: scaleX(0); }
+  0%, 31% { transform: scaleX(0); }
+  40%     { transform: scaleX(1); }
+  42%     { transform: scaleX(1); }
+  46%     { transform: scaleX(0); }
   100%    { transform: scaleX(0); }
 }
 @keyframes vsRuleValue {
-  0%, 71% { transform: scaleX(0); }
-  84%     { transform: scaleX(1); }
-  94%     { transform: scaleX(1); }
+  0%, 54% { transform: scaleX(0); }
+  68%     { transform: scaleX(1); }
+  95%     { transform: scaleX(1); }
   99%     { transform: scaleX(0); }
   100%    { transform: scaleX(0); }
 }
@@ -930,11 +922,11 @@ body {
 }
 
 @keyframes vsProgress {
-  0%, 38%  { transform: scaleX(0); }
-  40%      { transform: scaleX(0.05); }
-  59%      { transform: scaleX(0.88); }
-  61%      { transform: scaleX(0.88); }
-  66%      { transform: scaleX(0); }
+  0%, 27%  { transform: scaleX(0); }
+  29%      { transform: scaleX(0.05); }
+  41%      { transform: scaleX(0.88); }
+  42%      { transform: scaleX(0.88); }
+  46%      { transform: scaleX(0); }
   100%     { transform: scaleX(0); }
 }
 
@@ -956,30 +948,30 @@ body {
   opacity: 0;
 }
 
-/* Phase 1: 38%–48%  Phase 2: 48%–57%  Phase 3: 57%–65% */
+/* Phase 1: 27%–34%  Phase 2: 34%–41%  Phase 3: 40%–46% */
 .val-s__scan-label--1 { animation: vsScanLbl1 12s ease-out infinite; }
 .val-s__scan-label--2 { animation: vsScanLbl2 12s ease-out infinite; }
 .val-s__scan-label--3 { animation: vsScanLbl3 12s ease-out infinite; }
 
 @keyframes vsScanLbl1 {
-  0%, 37%  { opacity: 0; transform: translateY(4px); }
-  39%      { opacity: 1; transform: translateY(0); }
-  47%      { opacity: 1; transform: translateY(0); }
-  49%      { opacity: 0; transform: translateY(-4px); }
+  0%, 27%  { opacity: 0; transform: translateY(4px); }
+  29%      { opacity: 1; transform: translateY(0); }
+  32%      { opacity: 1; transform: translateY(0); }
+  34%      { opacity: 0; transform: translateY(-4px); }
   100%     { opacity: 0; }
 }
 @keyframes vsScanLbl2 {
-  0%, 49%  { opacity: 0; transform: translateY(4px); }
-  51%      { opacity: 1; transform: translateY(0); }
-  56%      { opacity: 1; transform: translateY(0); }
-  58%      { opacity: 0; transform: translateY(-4px); }
+  0%, 34%  { opacity: 0; transform: translateY(4px); }
+  36%      { opacity: 1; transform: translateY(0); }
+  39%      { opacity: 1; transform: translateY(0); }
+  41%      { opacity: 0; transform: translateY(-4px); }
   100%     { opacity: 0; }
 }
 @keyframes vsScanLbl3 {
-  0%, 58%  { opacity: 0; transform: translateY(4px); }
-  60%      { opacity: 1; transform: translateY(0); }
-  64%      { opacity: 1; transform: translateY(0); }
-  66%      { opacity: 0; }
+  0%, 40%  { opacity: 0; transform: translateY(4px); }
+  42%      { opacity: 1; transform: translateY(0); }
+  45%      { opacity: 1; transform: translateY(0); }
+  46%      { opacity: 0; }
   100%     { opacity: 0; }
 }
 
@@ -989,12 +981,12 @@ body {
 }
 
 @keyframes vsModelFlare {
-  0%, 33%  { color: rgba(255, 255, 255, 0.18); }
-  38%      { color: rgba(255, 255, 255, 0.18); }
-  48%      { color: rgba(255, 255, 255, 0.60); }
-  56%      { color: rgba(255, 255, 255, 0.32); }
-  63%      { color: rgba(255, 255, 255, 0.18); }
-  66%, 100%{ color: rgba(255, 255, 255, 0.18); }
+  0%, 25%  { color: rgba(255, 255, 255, 0.18); }
+  30%      { color: rgba(255, 255, 255, 0.18); }
+  36%      { color: rgba(255, 255, 255, 0.60); }
+  41%      { color: rgba(255, 255, 255, 0.32); }
+  45%      { color: rgba(255, 255, 255, 0.18); }
+  46%, 100%{ color: rgba(255, 255, 255, 0.18); }
 }
 
 /* ── Form rows (gear state) ────────────────────── */
@@ -1030,8 +1022,8 @@ body {
   opacity: 0;
 }
 
-/* Each value appears in sequence, staggered ~3% apart within the 12s loop.
-   Gear state is visible 5%–28%; values start at 7% and finish by 21%. */
+/* Each value appears in sequence, staggered ~2% apart within the 12s loop.
+   Gear state is visible 4%–20%; values start at 5% and finish by 15%. */
 .val-form__row--1 .val-form__value { animation: vsVal1 12s ease-out infinite; }
 .val-form__row--2 .val-form__value { animation: vsVal2 12s ease-out infinite; }
 .val-form__row--3 .val-form__value { animation: vsVal3 12s ease-out infinite; }
@@ -1039,38 +1031,38 @@ body {
 .val-form__row--5 .val-form__value { animation: vsVal5 12s ease-out infinite; }
 
 @keyframes vsVal1 {
-  0%, 7%   { opacity: 0; transform: translateX(-5px); }
-  9.5%     { opacity: 1; transform: translateX(0); }
-  28%      { opacity: 1; }
-  33%      { opacity: 0; }
+  0%, 5%   { opacity: 0; transform: translateX(-5px); }
+  7%       { opacity: 1; transform: translateX(0); }
+  20%      { opacity: 1; }
+  25%      { opacity: 0; }
   100%     { opacity: 0; }
 }
 @keyframes vsVal2 {
-  0%, 10%  { opacity: 0; transform: translateX(-5px); }
-  12.5%    { opacity: 1; transform: translateX(0); }
-  28%      { opacity: 1; }
-  33%      { opacity: 0; }
+  0%, 7%   { opacity: 0; transform: translateX(-5px); }
+  9%       { opacity: 1; transform: translateX(0); }
+  20%      { opacity: 1; }
+  25%      { opacity: 0; }
   100%     { opacity: 0; }
 }
 @keyframes vsVal3 {
-  0%, 13%  { opacity: 0; transform: translateX(-5px); }
-  15.5%    { opacity: 1; transform: translateX(0); }
-  28%      { opacity: 1; }
-  33%      { opacity: 0; }
+  0%, 9%   { opacity: 0; transform: translateX(-5px); }
+  11%      { opacity: 1; transform: translateX(0); }
+  20%      { opacity: 1; }
+  25%      { opacity: 0; }
   100%     { opacity: 0; }
 }
 @keyframes vsVal4 {
-  0%, 16%  { opacity: 0; transform: translateX(-5px); }
-  18.5%    { opacity: 1; transform: translateX(0); }
-  28%      { opacity: 1; }
-  33%      { opacity: 0; }
+  0%, 11%  { opacity: 0; transform: translateX(-5px); }
+  13%      { opacity: 1; transform: translateX(0); }
+  20%      { opacity: 1; }
+  25%      { opacity: 0; }
   100%     { opacity: 0; }
 }
 @keyframes vsVal5 {
-  0%, 19%  { opacity: 0; transform: translateX(-5px); }
-  21.5%    { opacity: 1; transform: translateX(0); }
-  28%      { opacity: 1; }
-  33%      { opacity: 0; }
+  0%, 13%  { opacity: 0; transform: translateX(-5px); }
+  15%      { opacity: 1; transform: translateX(0); }
+  20%      { opacity: 1; }
+  25%      { opacity: 0; }
   100%     { opacity: 0; }
 }
 
@@ -1087,10 +1079,10 @@ body {
 }
 
 @keyframes vsFormCta {
-  0%, 22%  { opacity: 0; }
-  24.5%    { opacity: 1; }
-  28%      { opacity: 1; }
-  33%      { opacity: 0; }
+  0%, 16%  { opacity: 0; }
+  18%      { opacity: 1; }
+  20%      { opacity: 1; }
+  25%      { opacity: 0; }
   100%     { opacity: 0; }
 }
 
@@ -1135,10 +1127,10 @@ body {
 }
 
 @keyframes vsRangeFill {
-  0%, 71%  { transform: scaleX(0); opacity: 0; }
-  73%      { opacity: 1; }
-  78%      { transform: scaleX(1); opacity: 1; }
-  94%      { transform: scaleX(1); opacity: 1; }
+  0%, 54%  { transform: scaleX(0); opacity: 0; }
+  56%      { opacity: 1; }
+  61%      { transform: scaleX(1); opacity: 1; }
+  95%      { transform: scaleX(1); opacity: 1; }
   99%      { transform: scaleX(0); opacity: 0; }
   100%     { transform: scaleX(0); opacity: 0; }
 }
@@ -1170,19 +1162,19 @@ body {
 }
 
 @keyframes vsRangeDot {
-  0%, 76%  { transform: translate(-50%, -50%) scale(0);    opacity: 0; }
-  80%      { transform: translate(-50%, -50%) scale(1.35); opacity: 1; }
-  84%      { transform: translate(-50%, -50%) scale(1);    opacity: 1; }
-  94%      { transform: translate(-50%, -50%) scale(1);    opacity: 1; }
+  0%, 59%  { transform: translate(-50%, -50%) scale(0);    opacity: 0; }
+  63%      { transform: translate(-50%, -50%) scale(1.35); opacity: 1; }
+  66%      { transform: translate(-50%, -50%) scale(1);    opacity: 1; }
+  95%      { transform: translate(-50%, -50%) scale(1);    opacity: 1; }
   99%      { transform: translate(-50%, -50%) scale(0);    opacity: 0; }
   100%     { transform: translate(-50%, -50%) scale(0);    opacity: 0; }
 }
 
 @keyframes vsRingPulse {
-  0%, 80%  { transform: translate(-50%, -50%) scale(1);   opacity: 0; }
-  82%      { transform: translate(-50%, -50%) scale(1.6); opacity: 0.8; }
-  87%      { transform: translate(-50%, -50%) scale(3.5); opacity: 0; }
-  94%      { opacity: 0; }
+  0%, 63%  { transform: translate(-50%, -50%) scale(1);   opacity: 0; }
+  65%      { transform: translate(-50%, -50%) scale(1.6); opacity: 0.8; }
+  70%      { transform: translate(-50%, -50%) scale(3.5); opacity: 0; }
+  95%      { opacity: 0; }
   100%     { opacity: 0; }
 }
 
@@ -1224,37 +1216,42 @@ body {
   .hero__line { opacity: 0; transform: translateY(26px); }
 }
 
-.hero__meta {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-top: 24px;
+/* ── Hero inline capture ───────────────────────── */
+.hero__form {
+  margin-top: 28px;
+  max-width: 440px;
+  min-height: 80px; /* reserve the mounted form's height so Vue hydration doesn't shift the fold */
+  transition:
+    opacity   0.72s cubic-bezier(0.16, 1, 0.3, 1) 340ms,
+    transform 0.72s cubic-bezier(0.16, 1, 0.3, 1) 340ms;
 }
 
-.hero__meta-rule {
-  display: block;
-  width: 28px;
+@starting-style {
+  .hero__form { opacity: 0; transform: translateY(18px); }
+}
+
+/* Visually hidden, available to screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
   height: 1px;
-  background: rgba(255, 255, 255, 0.3);
-  flex-shrink: 0;
-}
-
-.hero__meta-text {
-  font-size: 12px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.62);
-  letter-spacing: 0.03em;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* ── Hero CTA button ───────────────────────────── */
+/* The beacon — also the pre-mount fallback inside .hero__form. */
 .hero__cta {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  margin-top: 32px;
   padding: 13px 22px;
-  background: rgba(255, 255, 255, 0.94);
-  color: var(--navy);
+  background: var(--orange-cta);
+  color: #ffffff;
   border-radius: 8px;
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 17px;
@@ -1262,7 +1259,7 @@ body {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   text-decoration: none;
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.18), 0 1px 4px rgba(0, 0, 0, 0.10);
+  box-shadow: 0 4px 18px rgba(232, 123, 30, 0.35), 0 1px 4px rgba(4, 12, 24, 0.18);
   transition:
     opacity    0.72s cubic-bezier(0.16, 1, 0.3, 1) 340ms,
     transform  0.72s cubic-bezier(0.16, 1, 0.3, 1) 340ms,
@@ -1270,14 +1267,16 @@ body {
     box-shadow 0.18s ease 0ms;
 }
 
+.hero__cta:focus-visible { outline-color: #fff; }
+
 @starting-style {
   .hero__cta { opacity: 0; transform: translateY(18px); }
 }
 
 .hero__cta:hover {
-  background: #ffffff;
+  background: var(--orange-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.22), 0 1px 4px rgba(0, 0, 0, 0.10);
+  box-shadow: 0 6px 26px rgba(232, 123, 30, 0.48), 0 1px 4px rgba(4, 12, 24, 0.18);
 }
 
 .hero__cta:active { transform: translateY(0); }
@@ -1307,10 +1306,31 @@ body {
   font-weight: 300;
   font-style: italic;
   line-height: 1.5;
-  color: rgba(168, 210, 245, 0.52);
+  color: rgba(168, 210, 245, 0.74);
   max-width: 380px;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* Quiet B2B scent trail under the consumer form — text link, not a beacon. */
+.form-section__crosslink {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.form-section__crosslink a {
+  color: rgba(168, 210, 245, 0.86);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(168, 210, 245, 0.32);
+  padding-bottom: 1px;
+  transition: color 0.18s ease, border-color 0.18s ease;
+}
+
+.form-section__crosslink a:hover {
+  color: #ffffff;
+  border-bottom-color: rgba(255, 255, 255, 0.55);
 }
 
 .form-section__copy {
@@ -1343,7 +1363,7 @@ body {
   gap: 8px;
   font-size: 12px;
   font-weight: 400;
-  color: rgba(168, 210, 245, 0.60);
+  color: rgba(168, 210, 245, 0.74);
   margin-top: 14px;
   letter-spacing: 0.01em;
 }
@@ -1402,7 +1422,7 @@ body {
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.form__input::placeholder { color: #98b0c4; }
+.form__input::placeholder { color: #5a7088; }
 
 .form__input:focus {
   border-color: var(--border-focus);
@@ -1519,7 +1539,7 @@ body {
 
 .form-success__body {
   font-size: 14px;
-  font-weight: 300;
+  font-weight: 400;
   color: var(--blue-secondary);
   line-height: 1.55;
 }
@@ -1529,8 +1549,76 @@ body {
   color: var(--navy);
 }
 
+/* Typo escape hatch — quiet text button under the confirmation. */
+.form-success__again {
+  margin-top: 14px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--blue-alpine);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.form-success__again:hover { color: var(--navy); }
+
+/* ── Inline (hero) form variant ────────────────── */
+/* Must follow the base .form__* rules: same specificity, override by order. */
+.form--inline { gap: 10px; }
+
+.form--inline__row {
+  display: flex;
+  gap: 10px;
+}
+
+.form--inline__input {
+  flex: 1;
+  min-width: 0;
+  background: #ffffff;
+  border-color: transparent;
+  border-radius: 8px;
+  padding: 13px 16px;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.form--inline__submit {
+  width: auto;
+  margin-top: 0;
+  padding: 13px 20px;
+  white-space: nowrap;
+  border-radius: 8px;
+  font-size: 17px;
+  letter-spacing: 0.05em;
+}
+
+.form--inline__note {
+  text-align: left;
+  color: rgba(168, 210, 245, 0.74);
+  margin-top: 0;
+}
+
+/* Compact success state on dark ink */
+.form-success--inline {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(62, 207, 110, 0.35);
+  padding: 18px 20px;
+}
+
+.form-success--inline .form-success__mark { width: 34px; height: 34px; margin-bottom: 10px; }
+.form-success--inline .form-success__mark svg { width: 17px; height: 17px; }
+.form-success--inline .form-success__title { color: #ffffff; font-size: 26px; margin-bottom: 6px; }
+.form-success--inline .form-success__body { color: rgba(206, 232, 250, 0.85); }
+.form-success--inline .form-success__body strong { color: #ffffff; }
+.form-success--inline .form-success__again { color: rgba(168, 210, 245, 0.92); }
+.form-success--inline .form-success__again:hover { color: #ffffff; }
+
 /* ── Pillars ────────────────────────────────────── */
 .pillars {
+  scroll-margin-top: 72px;
   background: var(--fresh-snow);
   padding: 0 max(20px, 5vw);
 }
@@ -1565,13 +1653,14 @@ body {
 
 .pillar__body {
   font-size: 15px;
-  font-weight: 300;
+  font-weight: 400;
   color: var(--blue-secondary);
   line-height: 1.6;
 }
 
 /* ── For ski shops (B2B band) ──────────────────── */
 .shops {
+  scroll-margin-top: 72px;
   background:
     radial-gradient(ellipse 70% 60% at 100% 0%, rgba(58, 122, 170, 0.30) 0%, transparent 62%),
     var(--ink-700);
@@ -1682,13 +1771,63 @@ body {
 /* ── Footer ────────────────────────────────────── */
 .footer {
   background: var(--ink-850);
-  padding: 24px max(20px, 5vw);
-  padding-bottom: max(20px, env(safe-area-inset-bottom, 0px));
+  padding: 28px max(20px, 5vw);
+  padding-bottom: max(24px, env(safe-area-inset-bottom, 0px));
   padding-left:   max(20px, 5vw, env(safe-area-inset-left,  0px));
   padding-right:  max(20px, 5vw, env(safe-area-inset-right, 0px));
+}
+
+.footer__inner {
+  max-width: 1100px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.footer__brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.footer__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.footer__link {
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(168, 210, 245, 0.86);
+  text-decoration: none;
+}
+
+.footer__link:hover { color: #ffffff; text-decoration: underline; }
+
+.footer__privacy {
+  font-size: 11px;
+  font-weight: 300;
+  color: rgba(168, 210, 245, 0.74);
+  letter-spacing: 0.01em;
+}
+
+.footer__cta {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(168, 210, 245, 0.86);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(168, 210, 245, 0.32);
+  padding-bottom: 1px;
+  transition: color 0.18s ease, border-color 0.18s ease;
+}
+
+.footer__cta:hover {
+  color: #ffffff;
+  border-bottom-color: rgba(255, 255, 255, 0.55);
 }
 
 .footer__logo {
@@ -1703,15 +1842,12 @@ body {
   color: rgba(255, 255, 255, 0.70);
 }
 
-.footer__logo-icon {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-  border-radius: 4px;
+.footer__logo-img {
+  display: block;
+  height: 20px;
+  width: auto;
   opacity: 0.9;
 }
-
-.footer__logo span { color: var(--orange-cta); }
 
 .footer__copy {
   font-size: 11px;
@@ -1748,7 +1884,9 @@ body {
     row-gap: 36px;
   }
   .hero__title { font-size: clamp(60px, 16vw, 88px); }
-  .hero__meta { margin-top: 24px; }
+  .hero__form { max-width: none; min-height: 140px; }
+  .form--inline__row { flex-direction: column; }
+  .form--inline__submit { width: 100%; }
   .hero__visual { justify-content: center; }
   .hero__scroll { display: none; }
   .val-panel { max-width: 380px; height: 275px; }
@@ -1776,13 +1914,20 @@ body {
 
   .nav__links { display: none; }
   .nav__inner { gap: 12px; }
-  .nav__cta { font-size: 11px; padding: 10px 16px; }
+  .nav__cta {
+    font-size: 11px;
+    padding: 10px 16px;
+    min-height: 44px; /* WCAG touch target */
+    display: inline-flex;
+    align-items: center;
+  }
 
   /* Prevent iOS auto-zoom on input focus (font-size < 16px triggers zoom) */
   .form__input { font-size: 16px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   .reveal--ready { opacity: 1 !important; transform: none !important; }
   .nav__cta::before { display: none; }

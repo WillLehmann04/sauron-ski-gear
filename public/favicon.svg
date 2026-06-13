@@ -5,9 +5,9 @@
 <rect width="64" height="64" rx="14" fill="url(#bg)"/>
 <g transform="translate(3,4) scale(0.91)"><g>
   <path d="M 22 52 L 34 31 L 47 52 Z" fill="#2A4A73"/>
-  <path d="M 2 52 L 18 24 L 34 52 Z" fill="#F4791F"/>
-  <path d="M 18 24 L 29 13 L 35 18 L 47 7" fill="none" stroke="#F4791F" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="50.5" cy="5.5" r="4" fill="#F4791F"/>
+  <path d="M 2 52 L 18 24 L 34 52 Z" fill="#E87B1E"/>
+  <path d="M 18 24 L 29 13 L 35 18 L 47 7" fill="none" stroke="#E87B1E" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="50.5" cy="5.5" r="4" fill="#E87B1E"/>
   <g fill="#E9ECEF">
     <circle cx="8"  cy="11" r="1.5"/>
     <circle cx="55" cy="20" r="1.2"/>
