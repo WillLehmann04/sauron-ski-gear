@@ -1,0 +1,36 @@
+<% function statusLabel(s){ return s === 'done' ? 'Done' : s === 'active' ? 'In progress' : 'Planned'; } %>
+<%- include('partials/page-header') %>
+
+<main class="page">
+  <div class="page__inner">
+    <header class="page__head">
+      <p class="page__eyebrow">Roadmap</p>
+      <h1 class="page__title">What we're building</h1>
+      <p class="page__intro"><%= roadmap.intro %></p>
+    </header>
+
+    <% roadmap.sections.forEach(function(section){
+         var done = section.items.filter(function(i){ return i.status === 'done'; }).length; %>
+      <section class="rm-section">
+        <div class="rm-section__head">
+          <h2 class="rm-section__title"><%= section.title %></h2>
+          <span class="rm-section__count"><%= done %>/<%= section.items.length %></span>
+        </div>
+        <ul class="rm-list">
+          <% section.items.forEach(function(item){ %>
+            <li class="rm-item rm-item--<%= item.status %>">
+              <span class="rm-item__mark" aria-hidden="true"></span>
+              <span class="rm-item__body">
+                <span class="rm-item__title"><%= item.title %></span>
+                <% if (item.desc) { %><span class="rm-item__desc"><%= item.desc %></span><% } %>
+              </span>
+              <span class="rm-item__status rm-item__status--<%= item.status %>"><%= statusLabel(item.status) %></span>
+            </li>
+          <% }); %>
+        </ul>
+      </section>
+    <% }); %>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

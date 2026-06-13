@@ -1,0 +1,37 @@
+<% function formatDate(d){
+     var m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+     var p = d.split('-');
+     return p[2] + ' ' + m[parseInt(p[1], 10) - 1] + ' ' + p[0];
+   } %>
+<%- include('partials/page-header') %>
+
+<main class="page">
+  <div class="page__inner">
+    <header class="page__head">
+      <p class="page__eyebrow">Changelog</p>
+      <h1 class="page__title">What's changed</h1>
+      <p class="page__intro">Notable updates to PowVal, newest first.</p>
+    </header>
+
+    <ol class="cl-list">
+      <% changelog.forEach(function(entry){ %>
+        <li class="cl-entry">
+          <time class="cl-entry__date" datetime="<%= entry.date %>"><%= formatDate(entry.date) %></time>
+          <div class="cl-entry__body">
+            <h2 class="cl-entry__title"><%= entry.title %></h2>
+            <ul class="cl-changes">
+              <% entry.changes.forEach(function(c){ %>
+                <li class="cl-change">
+                  <span class="cl-tag cl-tag--<%= c.tag %>"><%= c.tag %></span>
+                  <span class="cl-change__text"><%= c.text %></span>
+                </li>
+              <% }); %>
+            </ul>
+          </div>
+        </li>
+      <% }); %>
+    </ol>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

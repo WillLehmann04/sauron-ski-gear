@@ -44,8 +44,10 @@ Keep other choices simple and swappable. Add dependencies deliberately.
 ├── server.js               ← entry point; wires Express and mounts routes
 │
 ├── routes/                 ← thin route handlers only; no business logic
-│   ├── index.js            ← GET /
+│   ├── index.js            ← GET / , GET /roadmap , GET /changelog
 │   └── waitlist.js         ← POST /waitlist
+│
+├── content/                ← editable page data (roadmap.js, changelog.js)
 │
 ├── services/               ← business logic; routes call services
 │   └── waitlist.js         ← validation, dedup, orchestration
@@ -58,9 +60,11 @@ Keep other choices simple and swappable. Add dependencies deliberately.
 │
 ├── views/
 │   ├── layouts/
-│   │   └── main.ejs        ← shared HTML shell (head, nav, footer)
-│   ├── partials/           ← reusable EJS snippets included by pages
-│   └── index.ejs           ← landing / waitlist page
+│   │   └── main.ejs        ← shared HTML shell (head; title via pageTitle local)
+│   ├── partials/           ← reusable EJS snippets (footer.ejs, page-header.ejs)
+│   ├── index.ejs           ← landing / waitlist page
+│   ├── roadmap.ejs         ← GET /roadmap (renders content/roadmap.js)
+│   └── changelog.ejs       ← GET /changelog (renders content/changelog.js)
 │
 ├── public/
 │   ├── css/
@@ -90,6 +94,7 @@ Keep other choices simple and swappable. Add dependencies deliberately.
 - **`deploy/`** — Production deployment kit: `setup-vps.sh` (one-time provisioning), `powval.service` (systemd), `Caddyfile`, `deploy.sh` (update + restart), `backup-db.sh` (nightly cron + email report), `render-email.js` + `templates/backup-email.hbs` (Handlebars HTML backup email, success + failure). Documented in `docs/deployment.md`.
 - **`.github/workflows/`** — CI. `deploy.yml` auto-deploys `main` to the VPS over SSH (gated on the `DEPLOY_ENABLED` repo variable; see `docs/deployment.md`).
 - **`ml/`** — The valuation model workspace: requirements (`task_outline.md`), and later the data-spike scripts, parser eval sets, and model evaluation harness. Request-path estimator code still lives in `routes/` + `services/` like everything else; `ml/` holds the offline/model side.
+- **`content/`** — Editable data for static content pages: `roadmap.js` (goals with `done`/`active`/`planned` status) and `changelog.js` (dated entries with `new`/`improved`/`fixed` tags). Routes pass these to the EJS pages; update the data file to update the page. Both pages are linked only from the footer.
 - **`docs/`** — One Markdown file per feature/module. `docs/README.md` is the index. Keep in sync with code.
 
 ---
