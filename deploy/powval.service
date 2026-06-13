@@ -1,0 +1,21 @@
+[Unit]
+Description=PowVal (whats my gear worth) Node server
+After=network.target
+
+[Service]
+Type=simple
+User=powval
+WorkingDirectory=/home/powval/app
+EnvironmentFile=/home/powval/app/.env
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=3
+# Hardening — app only needs to write its own data directory
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/powval/app/data
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

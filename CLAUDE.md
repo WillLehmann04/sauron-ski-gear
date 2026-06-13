@@ -24,8 +24,9 @@
 | Server | Express |
 | Templating | EJS (server-rendered pages + partials + layouts) |
 | Client interactivity | Vue 3 (CDN, mounted into EJS pages) |
-| Storage | JSON file (behind a swappable interface) |
+| Storage | SQLite (`better-sqlite3`, `data/powval.db`) behind the swappable `lib/storage.js` interface |
 | Config | `.env` via `dotenv` |
+| Hosting | Sydney VPS + Caddy + systemd, Cloudflare in front (see `docs/deployment.md`) |
 
 Keep other choices simple and swappable. Add dependencies deliberately.
 
@@ -69,8 +70,9 @@ Keep other choices simple and swappable. Add dependencies deliberately.
 │           └── WaitlistForm.js  ← Vue component (ES module, no build step)
 │
 ├── data/
-│   ├── waitlist.json       ← consumer signups; gitignored
-│   └── shops.json          ← ski-shop signups (B2B track); gitignored
+│   └── powval.db           ← SQLite: waitlist + shops tables; gitignored
+│
+├── deploy/                 ← production deployment kit (VPS setup, systemd, Caddy, backups)
 │
 └── docs/
     ├── README.md           ← docs index
@@ -84,7 +86,8 @@ Keep other choices simple and swappable. Add dependencies deliberately.
 - **`lib/`** — Pure utilities and thin interfaces. `storage.js` exposes `read(collection)` / `write(collection, data)` so the backing store can be swapped.
 - **`views/`** — EJS only. Layouts wrap pages; partials are reused fragments. No business logic in templates.
 - **`public/`** — Static assets served as-is. Vue components live here as ES modules (no build step required for now).
-- **`data/`** — Runtime data files. Consumer signups in `waitlist.json`, ski-shop signups in `shops.json` (separate collections so the two demand signals stay independent). Both gitignored; keep a `.gitkeep` to preserve the directory.
+- **`data/`** — Runtime data. `powval.db` (SQLite) holds the `waitlist` and `shops` tables (separate collections so the two demand signals stay independent). Gitignored; keep a `.gitkeep` to preserve the directory.
+- **`deploy/`** — Production deployment kit: `setup-vps.sh` (one-time provisioning), `powval.service` (systemd), `Caddyfile`, `deploy.sh` (update + restart), `backup-db.sh` (nightly cron). Documented in `docs/deployment.md`.
 - **`ml/`** — The valuation model workspace: requirements (`task_outline.md`), and later the data-spike scripts, parser eval sets, and model evaluation harness. Request-path estimator code still lives in `routes/` + `services/` like everything else; `ml/` holds the offline/model side.
 - **`docs/`** — One Markdown file per feature/module. `docs/README.md` is the index. Keep in sync with code.
 

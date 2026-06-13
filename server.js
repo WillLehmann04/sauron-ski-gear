@@ -6,8 +6,10 @@ const path = require('path');
 
 const app = express();
 
-// Behind a single reverse proxy (host/CDN) so req.ip reflects the real client.
-app.set('trust proxy', 1);
+// Proxy hops in front of the app so req.ip reflects the real client:
+// 1 = local/dev (none or one), 2 in production (Cloudflare -> Caddy -> app).
+// Getting this wrong makes the rate limiter bucket everyone under the CDN's IPs.
+app.set('trust proxy', Number(process.env.TRUST_PROXY_HOPS || 1));
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
