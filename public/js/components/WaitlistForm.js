@@ -9,6 +9,7 @@ const WaitlistForm = {
   data() {
     return {
       email: '',
+      name: '',
       shopName: '',
       hp: '', // honeypot — must stay empty for real users
       error: '',
@@ -28,6 +29,9 @@ const WaitlistForm = {
     errorId() { return this.emailId + '-error'; },
     emailLabel() { return this.isShop ? 'Work email' : 'Your email'; },
     emailPlaceholder() { return this.isShop ? 'name@yourshop.com' : 'you@example.com'; },
+    nameId() { return this.isShop ? 'shop-contact' : 'wl-name'; },
+    nameLabel() { return this.isShop ? 'Contact name' : 'Your name'; },
+    namePlaceholder() { return this.isShop ? 'Jordan Smith' : 'Alex Mercer'; },
     buttonLabel() {
       if (this.submitting) return this.isShop ? 'Sending…' : 'Claiming your spot…';
       if (this.isInline) return 'Get early access →';
@@ -76,6 +80,7 @@ const WaitlistForm = {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             email: this.email.trim(),
+            name: this.name.trim(),
             type: this.audience,
             shopName: this.shopName.trim(),
             hp: this.hp,
@@ -153,6 +158,18 @@ const WaitlistForm = {
           required
           :aria-invalid="errorField === 'shopName' ? 'true' : null"
           :aria-describedby="errorField === 'shopName' ? errorId : null"
+          :disabled="submitting"
+        />
+      </div>
+      <div class="form__field">
+        <label class="form__label" :for="nameId">{{ nameLabel }} <span class="form__optional">(optional)</span></label>
+        <input
+          :id="nameId"
+          class="form__input"
+          type="text"
+          v-model="name"
+          :placeholder="namePlaceholder"
+          autocomplete="name"
           :disabled="submitting"
         />
       </div>

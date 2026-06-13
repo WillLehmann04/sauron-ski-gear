@@ -13,9 +13,9 @@ The two audiences are stored in **separate collections** so demand can be measur
 
 1. User visits `/` (the landing page).
 2. Three Vue forms render, all from the same `WaitlistForm` component:
-   - The hero inline form (`#hero-form`, `variant: 'inline'`) — **email** only, single-row capture above the fold. Until Vue mounts (or if the CDN fails), the container holds a plain "Get early access" link to `#join` as a fallback.
-   - The consumer form (`#waitlist-app`) — **email** only.
-   - The shop form (`#shop-app`, `audience: 'shop'`) — **shop name** + **work email**.
+   - The hero inline form (`#hero-form`, `variant: 'inline'`) — **email** only, single-row capture above the fold (kept minimal for conversion). Until Vue mounts (or if the CDN fails), the container holds a plain "Get early access" link to `#join` as a fallback.
+   - The consumer form (`#waitlist-app`) — **your name** (optional) + **email**.
+   - The shop form (`#shop-app`, `audience: 'shop'`) — **shop name** + **contact name** (optional) + **work email**.
 3. Vue handles client-side validation and submits to `POST /waitlist` via `fetch`, including a `type` field.
 4. On success the form is replaced by a confirmation message (announced via `role="status"` for screen readers). A repeat signup is also treated as success — the confirmation acknowledges "you're already on the list" instead of showing an error. A "Wrong email? Re-enter it" button on the confirmation returns to the form (email preserved, input focused) so typos can be corrected.
 5. On validation error (invalid email, missing shop name) an inline error message is shown without a page reload, with the failing input highlighted and wired up via `aria-invalid` / `aria-describedby`.
@@ -39,7 +39,7 @@ The two audiences are stored in **separate collections** so demand can be measur
 
 - `email` — required, validated, max 254 chars.
 - `type` — `"consumer"` (default) or `"shop"`. Routes the signup to the matching collection.
-- `name` — optional (consumer), capped at 80 chars.
+- `name` — optional, capped at 80 chars. Collected by both card forms ("Your name" for consumers, "Contact name" for shops); empty for hero inline signups.
 - `shopName` — required when `type` is `"shop"` (capped at 120 chars), ignored otherwise.
 - `hp` — honeypot. A hidden field humans never fill. If non-empty, the request is treated as a bot: the API returns `{ ok: true }` but **nothing is stored**, keeping demand data clean.
 
